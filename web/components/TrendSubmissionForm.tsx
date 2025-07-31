@@ -37,15 +37,22 @@ interface TrendData {
   thumbnail_url?: string;
   posted_at?: string;
   wave_score?: number;
+  // Financial-specific fields
+  ticker_symbol?: string;
+  company_mentioned?: string;
+  market_sentiment?: 'very_bullish' | 'bullish' | 'neutral' | 'bearish' | 'very_bearish';
+  urgency_level?: 'immediate' | 'short_term' | 'medium_term' | 'long_term';
+  financial_impact?: string;
 }
 
 const categories = [
-  { id: 'visual_style', label: '🎨 Visual Style', description: 'Aesthetic trends, filters, visual effects' },
-  { id: 'audio_music', label: '🎵 Audio/Music', description: 'Songs, sounds, audio clips' },
-  { id: 'creator_technique', label: '🎬 Creator Technique', description: 'Filming, editing, storytelling methods' },
-  { id: 'meme_format', label: '😂 Meme Format', description: 'Templates, formats, viral concepts' },
-  { id: 'product_brand', label: '🛍️ Product/Brand', description: 'Products, brands, commercial trends' },
-  { id: 'behavior_pattern', label: '📊 Behavior Pattern', description: 'User behaviors, interaction patterns' }
+  { id: 'stocks_companies', label: '📈 Stocks & Public Companies', description: 'Viral content about public companies, earnings, products' },
+  { id: 'crypto_defi', label: '💰 Cryptocurrency & DeFi', description: 'Crypto pumps, DeFi protocols, blockchain projects' },
+  { id: 'startups_ipos', label: '🏢 Startups & IPOs', description: 'Startup buzz, IPO rumors, funding news' },
+  { id: 'fintech_apps', label: '📱 Fintech & Trading Apps', description: 'Trading apps, payment platforms, financial tools' },
+  { id: 'consumer_retail', label: '🛍️ Consumer Products', description: 'Public company products, retail trends, brand sentiment' },
+  { id: 'restaurants_chains', label: '🍔 Restaurants & Retail Chains', description: 'Restaurant chains, retail stores, consumer complaints' },
+  { id: 'gaming_entertainment', label: '🎮 Gaming & Entertainment Stocks', description: 'Gaming companies, streaming services, entertainment stocks' }
 ];
 
 const platforms = [
@@ -94,7 +101,12 @@ export default function TrendSubmissionForm({ onClose, onSubmit, initialUrl = ''
       hashtags: [],
       thumbnail_url: '',
       posted_at: '',
-      wave_score: 50
+      wave_score: 50,
+      ticker_symbol: '',
+      company_mentioned: '',
+      market_sentiment: 'neutral',
+      urgency_level: 'medium_term',
+      financial_impact: ''
     };
   };
   
@@ -628,7 +640,7 @@ export default function TrendSubmissionForm({ onClose, onSubmit, initialUrl = ''
                       ? 'border-red-500/50 focus:border-red-500 focus:ring-red-500/20' 
                       : 'border-wave-700/30 focus:border-wave-500 focus:ring-wave-500/20'
                   }`}
-                  placeholder="e.g. 'Winter Arc Challenge', 'Man in Finance', 'Brat Summer'..."
+                  placeholder="e.g. 'Tesla Cybertruck viral', 'AMC squeeze brewing', '$PEPE pump'..."
                   required
                 />
                 {validationErrors.title ? (
@@ -638,6 +650,49 @@ export default function TrendSubmissionForm({ onClose, onSubmit, initialUrl = ''
                     Videos with similar themes will be grouped under this trend umbrella
                   </p>
                 )}
+              </div>
+
+              {/* Financial-specific fields */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-wave-200 mb-2 font-medium">
+                    Company/Ticker Symbol
+                    <span className="text-sm text-wave-400 font-normal ml-2">(if applicable)</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.ticker_symbol}
+                    onChange={(e) => setFormData(prev => ({ ...prev, ticker_symbol: e.target.value.toUpperCase() }))}
+                    className="w-full px-4 py-3 rounded-xl bg-wave-800/50 border border-wave-700/30 text-white placeholder-wave-500 focus:outline-none focus:ring-2 focus:border-wave-500 focus:ring-wave-500/20"
+                    placeholder="e.g. TSLA, BTC, GME"
+                  />
+                </div>
+                <div>
+                  <label className="block text-wave-200 mb-2 font-medium">
+                    Company Name
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.company_mentioned}
+                    onChange={(e) => setFormData(prev => ({ ...prev, company_mentioned: e.target.value }))}
+                    className="w-full px-4 py-3 rounded-xl bg-wave-800/50 border border-wave-700/30 text-white placeholder-wave-500 focus:outline-none focus:ring-2 focus:border-wave-500 focus:ring-wave-500/20"
+                    placeholder="e.g. Tesla, Bitcoin, GameStop"
+                  />
+                </div>
+              </div>
+
+              {/* Financial Impact Description */}
+              <div>
+                <label className="block text-wave-200 mb-2 font-medium">
+                  Why might this affect markets?
+                  <span className="text-sm text-wave-400 font-normal ml-2">(brief explanation)</span>
+                </label>
+                <textarea
+                  value={formData.financial_impact}
+                  onChange={(e) => setFormData(prev => ({ ...prev, financial_impact: e.target.value }))}
+                  className="w-full px-4 py-3 rounded-xl bg-wave-800/50 border border-wave-700/30 text-white placeholder-wave-500 focus:outline-none focus:ring-2 focus:border-wave-500 focus:ring-wave-500/20 min-h-[80px]"
+                  placeholder="e.g. 'Massive viral complaints about service quality could impact Q4 earnings' or 'Crypto influencers pumping this coin to 2M+ followers'"
+                />
               </div>
 
             </motion.div>
@@ -704,52 +759,67 @@ export default function TrendSubmissionForm({ onClose, onSubmit, initialUrl = ''
                 </div>
               </div>
 
-              {/* Wave Score Slider */}
-              <div>
-                <label className="block text-wave-200 mb-3 font-medium">
-                  🌊 Wave Score - How cool is this trend?
-                </label>
-                <div className="bg-wave-800/30 rounded-xl p-6 space-y-4">
-                  <div className="flex justify-between items-start">
-                    <div className="flex-1">
-                      <p className="text-wave-300 text-sm mb-1">Rate the coolness factor</p>
-                      <p className="text-wave-500 text-xs">0 = Not cool at all | 100 = Extremely cool</p>
-                    </div>
-                    <div className="text-right">
-                      <div className="text-3xl font-bold bg-gradient-to-r from-wave-400 to-wave-600 bg-clip-text text-transparent">
-                        {formData.wave_score || 50}
-                      </div>
-                      <p className="text-wave-400 text-xs">Wave Score</p>
-                    </div>
+              {/* Market Sentiment & Urgency */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Market Sentiment */}
+                <div>
+                  <label className="block text-wave-200 mb-3 font-medium">
+                    📊 Market Sentiment
+                  </label>
+                  <div className="space-y-2">
+                    {[
+                      { value: 'very_bullish', label: '🚀 Very Bullish', color: 'text-green-400' },
+                      { value: 'bullish', label: '📈 Bullish', color: 'text-green-300' },
+                      { value: 'neutral', label: '😐 Neutral', color: 'text-wave-400' },
+                      { value: 'bearish', label: '📉 Bearish', color: 'text-red-300' },
+                      { value: 'very_bearish', label: '💀 Very Bearish', color: 'text-red-400' }
+                    ].map((sentiment) => (
+                      <button
+                        key={sentiment.value}
+                        type="button"
+                        onClick={() => setFormData(prev => ({ ...prev, market_sentiment: sentiment.value as any }))}
+                        className={`
+                          w-full p-3 rounded-lg border transition-all text-left flex items-center gap-2
+                          ${formData.market_sentiment === sentiment.value
+                            ? 'border-wave-500 bg-wave-600/20'
+                            : 'border-wave-700/30 hover:border-wave-600/50'
+                          }
+                        `}
+                      >
+                        <span className={sentiment.color}>{sentiment.label}</span>
+                      </button>
+                    ))}
                   </div>
-                  
-                  <div className="relative">
-                    <input
-                      type="range"
-                      min="0"
-                      max="100"
-                      value={formData.wave_score || 50}
-                      onChange={(e) => setFormData(prev => ({ ...prev, wave_score: parseInt(e.target.value) }))}
-                      className="w-full h-2 bg-wave-700/50 rounded-lg appearance-none cursor-pointer slider-thumb"
-                      style={{
-                        background: `linear-gradient(to right, #3b82f6 0%, #8b5cf6 ${formData.wave_score || 50}%, #374151 ${formData.wave_score || 50}%, #374151 100%)`
-                      }}
-                    />
-                    <div className="flex justify-between text-xs text-wave-500 mt-2">
-                      <span>0</span>
-                      <span>25</span>
-                      <span>50</span>
-                      <span>75</span>
-                      <span>100</span>
-                    </div>
-                  </div>
-                  
-                  <div className="flex justify-between text-xs">
-                    <span className="text-wave-600">🥱 Meh</span>
-                    <span className="text-wave-500">😐 OK</span>
-                    <span className="text-wave-400">👍 Cool</span>
-                    <span className="text-wave-300">🔥 Fire</span>
-                    <span className="text-wave-200">🌊 Wave!</span>
+                </div>
+
+                {/* Urgency Level */}
+                <div>
+                  <label className="block text-wave-200 mb-3 font-medium">
+                    ⏰ Trading Urgency
+                  </label>
+                  <div className="space-y-2">
+                    {[
+                      { value: 'immediate', label: '🔥 Immediate (0-24hrs)', desc: 'Action needed NOW' },
+                      { value: 'short_term', label: '⚡ Short-term (1-7 days)', desc: 'Building momentum' },
+                      { value: 'medium_term', label: '📅 Medium-term (1-4 weeks)', desc: 'Developing trend' },
+                      { value: 'long_term', label: '🌱 Long-term (1+ months)', desc: 'Early signal' }
+                    ].map((urgency) => (
+                      <button
+                        key={urgency.value}
+                        type="button"
+                        onClick={() => setFormData(prev => ({ ...prev, urgency_level: urgency.value as any }))}
+                        className={`
+                          w-full p-3 rounded-lg border transition-all text-left
+                          ${formData.urgency_level === urgency.value
+                            ? 'border-wave-500 bg-wave-600/20'
+                            : 'border-wave-700/30 hover:border-wave-600/50'
+                          }
+                        `}
+                      >
+                        <div className="font-medium text-wave-200 text-sm">{urgency.label}</div>
+                        <div className="text-xs text-wave-400">{urgency.desc}</div>
+                      </button>
+                    ))}
                   </div>
                 </div>
               </div>

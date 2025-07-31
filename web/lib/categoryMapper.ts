@@ -1,37 +1,38 @@
 // Category mapper to convert frontend display values to database enum values
 
 // Map of frontend display values to database enum values
-// Database enum values: 'visual_style', 'audio_music', 'creator_technique', 'meme_format', 'product_brand', 'behavior_pattern'
+// Database enum values: 'stocks_companies', 'crypto_defi', 'startups_ipos', 'fintech_apps', 'consumer_retail', 'restaurants_chains', 'gaming_entertainment'
 export const CATEGORY_MAP: Record<string, string> = {
-  // Frontend -> Database (matching actual database enum values)
-  'Fashion & Beauty': 'visual_style',
-  'Food & Drink': 'behavior_pattern',
-  'Humor & Memes': 'meme_format',
-  'Lifestyle': 'behavior_pattern',
-  'Politics & Social Issues': 'behavior_pattern',
-  'Music & Dance': 'audio_music',
-  'Sports & Fitness': 'behavior_pattern',
-  'Tech & Gaming': 'creator_technique',
-  'Art & Creativity': 'visual_style',
-  'Education & Science': 'creator_technique',
-  // Additional mappings
-  'Entertainment': 'audio_music',
-  'Travel': 'behavior_pattern',
-  'Business': 'behavior_pattern',
-  'Health & Wellness': 'behavior_pattern',
-  'Pets & Animals': 'behavior_pattern',
-  // New categories
-  'Luxury': 'product_brand',
-  'Celebrity': 'behavior_pattern',
-  'Meme Coin': 'meme_format',
-  'Meme Stock': 'meme_format',
+  // Finance-focused frontend -> Database mappings
+  'Stocks & Public Companies': 'stocks_companies',
+  'Cryptocurrency & DeFi': 'crypto_defi',
+  'Startups & IPOs': 'startups_ipos',
+  'Fintech & Trading Apps': 'fintech_apps',
+  'Consumer Products': 'consumer_retail',
+  'Restaurants & Retail Chains': 'restaurants_chains',
+  'Gaming & Entertainment Stocks': 'gaming_entertainment',
+  'Real Estate & REITs': 'stocks_companies',
+  'Commodities & Resources': 'stocks_companies',
+  'Financial Services': 'fintech_apps',
+  'Luxury': 'consumer_retail',
+  'Celebrity': 'stocks_companies',
+  'Meme Coin': 'crypto_defi',
+  'Meme Stock': 'stocks_companies',
   // Direct mappings for database values
-  'visual_style': 'visual_style',
-  'audio_music': 'audio_music',
-  'creator_technique': 'creator_technique',
-  'meme_format': 'meme_format',
-  'product_brand': 'product_brand',
-  'behavior_pattern': 'behavior_pattern'
+  'stocks_companies': 'stocks_companies',
+  'crypto_defi': 'crypto_defi',
+  'startups_ipos': 'startups_ipos',
+  'fintech_apps': 'fintech_apps',
+  'consumer_retail': 'consumer_retail',
+  'restaurants_chains': 'restaurants_chains',
+  'gaming_entertainment': 'gaming_entertainment',
+  // Legacy mappings (for backward compatibility)
+  'visual_style': 'stocks_companies',
+  'audio_music': 'gaming_entertainment',
+  'creator_technique': 'fintech_apps',
+  'meme_format': 'stocks_companies',
+  'product_brand': 'consumer_retail',
+  'behavior_pattern': 'stocks_companies'
 };
 
 /**
