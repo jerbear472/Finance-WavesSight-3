@@ -16,11 +16,11 @@ export default function Home() {
           
           {/* Tagline */}
           <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-400 mb-4">
-            Turn Your Financial Social Media Browsing Into Serious Income
+            Get Paid to Spot Financial Trends
           </p>
           
           <p className="text-lg text-gray-500 dark:text-gray-500 mb-8 max-w-2xl mx-auto">
-            Get paid $1-10 to spot viral financial movements before they hit the market
+            Earn $1-10 for every viral stock or crypto movement you find
           </p>
           
           {/* Earning Highlight Box */}
@@ -29,10 +29,10 @@ export default function Home() {
               <div className="text-4xl">💰</div>
               <div className="text-center sm:text-left">
                 <p className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-                  Spot the Next GameStop, Tesla Viral Moment, or Crypto Pump
+                  Real Money for Real Financial Signals
                 </p>
                 <p className="text-gray-700 dark:text-gray-300">
-                  Made $1,200 last month spotting crypto trends • Caught Tesla TikTok buzz 6 hours before stock moved
+                  Average spotter earns $1,200/month • Top performers earn $5,000+
                 </p>
               </div>
             </div>
@@ -44,7 +44,7 @@ export default function Home() {
               href="/register"
               className="btn-primary px-8 py-4 text-lg hover-lift inline-flex items-center gap-2"
             >
-              Start Earning from Finance Trends
+              Start Earning Now
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
               </svg>
@@ -82,77 +82,55 @@ export default function Home() {
       <section className="py-20 bg-gradient-to-b from-white to-gray-50 dark:from-neutral-950 dark:to-neutral-900">
         <div className="container-custom">
           <h2 className="text-3xl md:text-4xl font-light text-center mb-12">
-            Real Examples from Our <span className="text-gradient font-normal">Top Earners</span>
+            How It <span className="text-gradient font-normal">Works</span>
           </h2>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
             <div className="bg-white dark:bg-neutral-800 rounded-xl p-6 shadow-sm border border-gray-100 dark:border-neutral-700">
-              <div className="flex items-start gap-3 mb-4">
-                <span className="text-3xl">🚀</span>
-                <div>
-                  <h3 className="font-semibold text-lg mb-1">Tesla Cybertruck Viral</h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">TikTok videos trending</p>
-                </div>
+              <div className="text-center mb-4">
+                <span className="text-4xl">👀</span>
+                <h3 className="font-semibold text-lg mt-3 mb-2">1. Spot Trends</h3>
+                <p className="text-gray-600 dark:text-gray-400">Find viral content about stocks, crypto, or companies on social media</p>
               </div>
-              <div className="space-y-2 text-sm">
-                <p className="text-gray-700 dark:text-gray-300">Spotted 6 hours before TSLA +4.2%</p>
-                <div className="flex justify-between items-center pt-2 border-t border-gray-200 dark:border-neutral-700">
-                  <span className="text-gray-600 dark:text-gray-400">Base pay:</span>
-                  <span className="font-semibold text-green-600">$5.00</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-600 dark:text-gray-400">Performance bonus:</span>
-                  <span className="font-semibold text-green-600">+$25.00</span>
-                </div>
+              <div className="bg-gray-50 dark:bg-neutral-900 rounded-lg p-3 text-sm">
+                <p className="text-gray-700 dark:text-gray-300">Example: "Tesla Cybertruck going viral on TikTok"</p>
               </div>
             </div>
 
             <div className="bg-white dark:bg-neutral-800 rounded-xl p-6 shadow-sm border border-gray-100 dark:border-neutral-700">
-              <div className="flex items-start gap-3 mb-4">
-                <span className="text-3xl">💎</span>
-                <div>
-                  <h3 className="font-semibold text-lg mb-1">$PEPE Pump Signal</h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">Crypto Twitter buzzing</p>
-                </div>
+              <div className="text-center mb-4">
+                <span className="text-4xl">📤</span>
+                <h3 className="font-semibold text-lg mt-3 mb-2">2. Submit</h3>
+                <p className="text-gray-600 dark:text-gray-400">Share the link, ticker, and why it might move markets</p>
               </div>
-              <div className="space-y-2 text-sm">
-                <p className="text-gray-700 dark:text-gray-300">24hrs before +127% pump</p>
-                <div className="flex justify-between items-center pt-2 border-t border-gray-200 dark:border-neutral-700">
-                  <span className="text-gray-600 dark:text-gray-400">Base pay:</span>
-                  <span className="font-semibold text-green-600">$3.00</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-600 dark:text-gray-400">Performance bonus:</span>
-                  <span className="font-semibold text-green-600">+$50.00</span>
-                </div>
+              <div className="bg-gray-50 dark:bg-neutral-900 rounded-lg p-3 text-sm">
+                <p className="text-gray-700 dark:text-gray-300">Takes 30 seconds • Get instant payment estimate</p>
               </div>
             </div>
 
             <div className="bg-white dark:bg-neutral-800 rounded-xl p-6 shadow-sm border border-gray-100 dark:border-neutral-700">
-              <div className="flex items-start gap-3 mb-4">
-                <span className="text-3xl">🍔</span>
-                <div>
-                  <h3 className="font-semibold text-lg mb-1">Chipotle Portion Drama</h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">Reddit/TikTok complaints</p>
-                </div>
+              <div className="text-center mb-4">
+                <span className="text-4xl">💰</span>
+                <h3 className="font-semibold text-lg mt-3 mb-2">3. Get Paid</h3>
+                <p className="text-gray-600 dark:text-gray-400">Earn $1-10 instantly, plus bonuses if markets move</p>
               </div>
-              <div className="space-y-2 text-sm">
-                <p className="text-gray-700 dark:text-gray-300">3 days before CMG -8.3%</p>
-                <div className="flex justify-between items-center pt-2 border-t border-gray-200 dark:border-neutral-700">
-                  <span className="text-gray-600 dark:text-gray-400">Base pay:</span>
-                  <span className="font-semibold text-green-600">$7.50</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-600 dark:text-gray-400">Performance bonus:</span>
-                  <span className="font-semibold text-green-600">+$100.00</span>
-                </div>
+              <div className="bg-gray-50 dark:bg-neutral-900 rounded-lg p-3 text-sm">
+                <p className="text-gray-700 dark:text-gray-300">Cash out anytime • Direct deposit available</p>
               </div>
             </div>
           </div>
 
-          <p className="text-center mt-8 text-sm text-gray-600 dark:text-gray-400">
-            Average spotter earns <span className="font-semibold text-gray-900 dark:text-gray-100">$1,200/month</span> • Top performers earn <span className="font-semibold text-gray-900 dark:text-gray-100">$5,000+</span>
-          </p>
+          <div className="text-center mt-12">
+            <Link 
+              href="/register"
+              className="btn-primary px-8 py-4 text-lg hover-lift inline-flex items-center gap-2"
+            >
+              Get Started - It's Free
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+              </svg>
+            </Link>
+          </div>
         </div>
       </section>
 
@@ -193,8 +171,8 @@ export default function Home() {
             <div className="card card-hover">
               <div className="p-6">
                 <div className="text-4xl mb-4 text-center">📊</div>
-                <h3 className="text-xl font-semibold mb-3 text-center">Hedge Fund Dashboard</h3>
-                <p className="text-gray-600 dark:text-gray-400 text-center mb-4">Real-time financial signals</p>
+                <h3 className="text-xl font-semibold mb-3 text-center">Enterprise Dashboard</h3>
+                <p className="text-gray-600 dark:text-gray-400 text-center mb-4">Professional market intelligence</p>
                 <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-400">
                   <li className="flex items-center">
                     <span className="text-cyan-500 mr-2">✓</span>
@@ -226,10 +204,10 @@ export default function Home() {
       <section className="py-20">
         <div className="container-custom text-center">
           <h2 className="text-3xl md:text-4xl font-light mb-6">
-            Your WSB browsing finally pays off
+            Ready to start earning?
           </h2>
           <p className="text-lg text-gray-600 dark:text-gray-400 mb-8">
-            Join thousands earning real money from spotting financial movements early
+            Join thousands who get paid for spotting financial trends
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <Link 
@@ -245,7 +223,7 @@ export default function Home() {
               href="/register?enterprise=true"
               className="btn-secondary px-8 py-4 text-lg inline-flex items-center gap-2"
             >
-              Hedge Fund Access
+              Enterprise Access
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
               </svg>

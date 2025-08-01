@@ -32,22 +32,29 @@ interface ValidatedTrend {
   screenshot_url?: string;
   thumbnail_url?: string;
   evidence?: any;
+  ticker_symbol?: string;
+  company_mentioned?: string;
+  market_sentiment?: string;
+  urgency_level?: string;
+  financial_impact?: string;
+  financial_relevance_score?: number;
+  signal_type?: string;
   spotter?: {
     username: string;
   };
 }
 
 interface EnterpriseStats {
-  total_validated_trends: number;
-  avg_validation_score: number;
-  total_categories: number;
-  top_category: string;
-  trends_today: number;
-  trends_this_week: number;
-  trends_this_month: number;
-  total_spotters: number;
-  trend_velocity: number;
-  estimated_reach: number;
+  total_signals: number;
+  high_impact_signals: number;
+  total_tickers_tracked: number;
+  top_ticker: string;
+  signals_today: number;
+  signals_this_week: number;
+  bullish_signals: number;
+  bearish_signals: number;
+  avg_relevance_score: number;
+  urgent_signals: number;
 }
 
 export default function EnterpriseDashboard() {
@@ -64,16 +71,16 @@ export default function EnterpriseDashboard() {
   const audioRef = useRef<HTMLAudioElement>(null);
   
   const [stats, setStats] = useState<EnterpriseStats>({
-    total_validated_trends: 0,
-    avg_validation_score: 0,
-    total_categories: 0,
-    top_category: 'N/A',
-    trends_today: 0,
-    trends_this_week: 0,
-    trends_this_month: 0,
-    total_spotters: 0,
-    trend_velocity: 0,
-    estimated_reach: 0
+    total_signals: 0,
+    high_impact_signals: 0,
+    total_tickers_tracked: 0,
+    top_ticker: 'N/A',
+    signals_today: 0,
+    signals_this_week: 0,
+    bullish_signals: 0,
+    bearish_signals: 0,
+    avg_relevance_score: 0,
+    urgent_signals: 0
   });
 
   useEffect(() => {
@@ -137,43 +144,57 @@ export default function EnterpriseDashboard() {
       if (trendsError) throw trendsError;
       setTrends(trendsData || []);
 
-      // Calculate enhanced stats
+      // Calculate financial stats
       if (trendsData) {
-        const categoryMap = new Map();
-        const spotterSet = new Set();
-        let totalScore = 0;
-        let hourlyTrends = 0;
-        const hourAgo = new Date(now.getTime() - 60 * 60 * 1000);
+        const tickerMap = new Map();
+        let totalRelevanceScore = 0;
+        let bullishCount = 0;
+        let bearishCount = 0;
+        let urgentCount = 0;
+        let highImpactCount = 0;
 
         trendsData.forEach(trend => {
-          categoryMap.set(trend.category, (categoryMap.get(trend.category) || 0) + 1);
-          spotterSet.add(trend.spotter_id);
-          totalScore += trend.validation_ratio;
+          if (trend.ticker_symbol) {
+            tickerMap.set(trend.ticker_symbol, (tickerMap.get(trend.ticker_symbol) || 0) + 1);
+          }
           
-          const trendDate = new Date(trend.created_at);
-          if (trendDate >= hourAgo) hourlyTrends++;
+          totalRelevanceScore += trend.financial_relevance_score || 0;
+          
+          if (trend.market_sentiment === 'bullish' || trend.market_sentiment === 'very_bullish') {
+            bullishCount++;
+          } else if (trend.market_sentiment === 'bearish' || trend.market_sentiment === 'very_bearish') {
+            bearishCount++;
+          }
+          
+          if (trend.urgency_level === 'immediate') {
+            urgentCount++;
+          }
+          
+          if ((trend.financial_relevance_score || 0) >= 70) {
+            highImpactCount++;
+          }
         });
 
-        const topCategory = Array.from(categoryMap.entries())
+        const topTicker = Array.from(tickerMap.entries())
           .sort((a, b) => b[1] - a[1])[0];
 
         setStats({
-          total_validated_trends: trendsData.length,
-          avg_validation_score: trendsData.length > 0 ? (totalScore / trendsData.length) * 100 : 0,
-          total_categories: categoryMap.size,
-          top_category: topCategory ? topCategory[0] : 'N/A',
-          trends_today: trendsData.filter(t => {
+          total_signals: trendsData.length,
+          high_impact_signals: highImpactCount,
+          total_tickers_tracked: tickerMap.size,
+          top_ticker: topTicker ? topTicker[0] : 'N/A',
+          signals_today: trendsData.filter(t => {
             const trendDate = new Date(t.created_at);
             return trendDate >= new Date(now.getTime() - 24 * 60 * 60 * 1000);
           }).length,
-          trends_this_week: trendsData.filter(t => {
+          signals_this_week: trendsData.filter(t => {
             const trendDate = new Date(t.created_at);
             return trendDate >= new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
           }).length,
-          trends_this_month: trendsData.length,
-          total_spotters: spotterSet.size,
-          trend_velocity: hourlyTrends,
-          estimated_reach: trendsData.reduce((sum, t) => sum + (t.validation_count * 1000), 0)
+          bullish_signals: bullishCount,
+          bearish_signals: bearishCount,
+          avg_relevance_score: trendsData.length > 0 ? totalRelevanceScore / trendsData.length : 0,
+          urgent_signals: urgentCount
         });
       }
     } catch (error) {

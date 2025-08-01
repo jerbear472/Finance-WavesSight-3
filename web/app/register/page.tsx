@@ -132,7 +132,7 @@ export default function RegisterPage() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
               </svg>
             </motion.div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-4">Check Your Email!</h1>
+            <h1 className="text-3xl font-bold text-gray-900 mb-4">Almost Ready to Earn!</h1>
             <div className="bg-blue-50/50 backdrop-blur-sm rounded-xl p-6 mb-6 border border-blue-100">
               <p className="text-gray-700 mb-4 text-lg">
                 We've sent a confirmation email to
@@ -141,7 +141,12 @@ export default function RegisterPage() {
                 {formData.email}
               </p>
               <p className="text-gray-600 text-sm">
-                Click the link in the email to confirm your account and start spotting trends!
+                Click the link in the email to activate your account and start earning $1-10 per financial trend!
+              </p>
+            </div>
+            <div className="bg-gradient-to-r from-green-50 to-blue-50 rounded-xl p-4 mb-4 border border-green-200">
+              <p className="text-sm text-gray-700">
+                <span className="font-semibold">💡 Pro Tip:</span> While you wait, follow @elonmusk, @jimcramer, and crypto Twitter for your first trends!
               </p>
             </div>
             <div className="space-y-4">
@@ -166,8 +171,8 @@ export default function RegisterPage() {
           <>
             <div className="text-center mb-10">
               <WaveSightLogo size="lg" className="justify-center mb-6" />
-              <h1 className="text-4xl font-bold text-gray-900 mb-3">Create Account</h1>
-              <p className="text-gray-600 text-lg">Join the community spotting trends before they break</p>
+              <h1 className="text-4xl font-bold text-gray-900 mb-3">Start Earning Today</h1>
+              <p className="text-gray-600 text-lg">Join thousands earning $1-10 per financial trend</p>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-6">
@@ -205,7 +210,7 @@ export default function RegisterPage() {
                 value={formData.username}
                 onChange={(e) => setFormData({ ...formData, username: e.target.value })}
                 className="w-full px-4 py-3.5 rounded-xl bg-gray-50 border border-gray-300 text-gray-900 placeholder-gray-400 focus:outline-none focus:border-blue-500 focus:bg-white transition-all duration-200"
-                placeholder="trendspotter"
+                placeholder="stockhunter"
                 pattern="[a-zA-Z0-9_]+"
                 title="Username can only contain letters, numbers, and underscores"
               />
@@ -316,7 +321,7 @@ export default function RegisterPage() {
                 </>
               ) : (
                 <>
-                  <span>Create Account</span>
+                  <span>Start Earning</span>
                   <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
                   </svg>

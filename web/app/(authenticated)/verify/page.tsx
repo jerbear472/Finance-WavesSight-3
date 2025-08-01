@@ -545,10 +545,10 @@ export default function Verify() {
               </motion.div>
               <div>
                 <h1 className="text-2xl sm:text-3xl font-bold text-white">
-                  Trend Verification
+                  Financial Signal Verification
                 </h1>
                 <p className="text-sm text-gray-400 mt-0.5">
-                  Help validate what's trending
+                  Validate market-moving content
                 </p>
               </div>
             </div>
@@ -1069,7 +1069,7 @@ export default function Verify() {
                 }`}
               >
                 <XIcon className="w-5 h-5" />
-                <span>Not Trending</span>
+                <span>No Impact</span>
               </motion.button>
               
               <motion.button
@@ -1095,15 +1095,15 @@ export default function Verify() {
                 }`}
               >
                 <CheckIcon className="w-5 h-5" />
-                <span>Yes, Trending</span>
+                <span>Market Mover</span>
               </motion.button>
             </div>
             
             {/* Keyboard Shortcuts */}
             <div className="mt-4 text-center text-xs text-gray-500">
               <p>Use keyboard shortcuts: 
-                <kbd className="px-2 py-1 bg-gray-800 rounded text-gray-300 mx-1">←/A</kbd> Not Trending
-                <kbd className="px-2 py-1 bg-gray-800 rounded text-gray-300 mx-1">→/D</kbd> Trending
+                <kbd className="px-2 py-1 bg-gray-800 rounded text-gray-300 mx-1">←/A</kbd> No Impact
+                <kbd className="px-2 py-1 bg-gray-800 rounded text-gray-300 mx-1">→/D</kbd> Market Mover
                 <kbd className="px-2 py-1 bg-gray-800 rounded text-gray-300 mx-1">↓/S</kbd> Skip
                 <kbd className="px-2 py-1 bg-gray-800 rounded text-gray-300 mx-1">1-5</kbd> Set confidence
               </p>
@@ -1130,7 +1130,7 @@ export default function Verify() {
               className="bg-gray-900 rounded-3xl p-6 max-w-md w-full border border-white/10"
               onClick={(e) => e.stopPropagation()}
             >
-              <h2 className="text-2xl font-bold mb-4">How to Verify Trends</h2>
+              <h2 className="text-2xl font-bold mb-4">How to Verify Financial Signals</h2>
               
               <div className="space-y-4 mb-6">
                 <div className="flex items-start gap-3">
@@ -1138,8 +1138,8 @@ export default function Verify() {
                     <span className="text-sm font-bold text-blue-400">1</span>
                   </div>
                   <div>
-                    <p className="font-semibold">Review the trend</p>
-                    <p className="text-sm text-gray-400">Look at the content and engagement metrics</p>
+                    <p className="font-semibold">Check viral reach</p>
+                    <p className="text-sm text-gray-400">Is this content spreading rapidly about stocks/crypto?</p>
                   </div>
                 </div>
                 
@@ -1148,8 +1148,8 @@ export default function Verify() {
                     <span className="text-sm font-bold text-purple-400">2</span>
                   </div>
                   <div>
-                    <p className="font-semibold">Set your confidence</p>
-                    <p className="text-sm text-gray-400">Adjust the slider based on how sure you are</p>
+                    <p className="font-semibold">Assess market impact</p>
+                    <p className="text-sm text-gray-400">Could this influence trading decisions or sentiment?</p>
                   </div>
                 </div>
                 
@@ -1158,8 +1158,8 @@ export default function Verify() {
                     <span className="text-sm font-bold text-green-400">3</span>
                   </div>
                   <div>
-                    <p className="font-semibold">Make your decision</p>
-                    <p className="text-sm text-gray-400">Click the buttons to verify, reject, or skip</p>
+                    <p className="font-semibold">Rate the signal</p>
+                    <p className="text-sm text-gray-400">Market Mover = likely price impact, No Impact = noise</p>
                   </div>
                 </div>
               </div>
