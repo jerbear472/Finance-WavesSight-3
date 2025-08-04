@@ -156,6 +156,7 @@ export default function FinanceSubmitPage() {
       const response = await fetch('/api/finance-trends', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify(data)
       });
 

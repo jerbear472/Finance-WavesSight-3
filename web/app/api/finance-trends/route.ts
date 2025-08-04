@@ -1,38 +1,38 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 
 export async function POST(request: NextRequest) {
   try {
-    // Get the user's session
-    const cookieStore = cookies();
-    const authToken = cookieStore.get('sb-auth-token')?.value;
+    // Create Supabase client with proper auth handling
+    const supabase = createRouteHandlerClient({ cookies });
     
-    if (!authToken) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
-    
-    // Create Supabase client with service role for admin operations
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
-    
-    // Verify the user's token
-    const { data: { user }, error: authError } = await supabase.auth.getUser(authToken);
+    // Get the authenticated user
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
     
     if (authError || !user) {
       return NextResponse.json(
-        { error: 'Invalid authentication' },
+        { error: 'Unauthorized - Please log in' },
         { status: 401 }
       );
     }
     
     // Get the trend data from request
     const trendData = await request.json();
+    
+    // Calculate payout based on quality signals
+    let calculatedPayout = 1.00; // Base payout
+    
+    // Add bonuses based on quality
+    if (trendData.viral_evidence?.includes('trending_hashtag')) calculatedPayout += 0.50;
+    if (trendData.viral_evidence?.includes('influencer_mention')) calculatedPayout += 1.00;
+    if (trendData.cross_platform?.length > 0) calculatedPayout += 0.75 * trendData.cross_platform.length;
+    if (trendData.views_count > 1000000) calculatedPayout += 2.00;
+    if (trendData.technical_context) calculatedPayout += 0.75;
+    if (trendData.demographics?.length > 0) calculatedPayout += 0.50;
+    
+    // Cap at $10
+    calculatedPayout = Math.min(calculatedPayout, 10.00);
     
     // Prepare the data for insertion
     const financeTrend = {
@@ -57,48 +57,63 @@ export async function POST(request: NextRequest) {
       creator_handle: trendData.creator_handle || null,
       creator_name: trendData.creator_name || null,
       post_caption: trendData.post_caption || null,
-      likes_count: trendData.likes_count || 0,
-      comments_count: trendData.comments_count || 0,
-      shares_count: trendData.shares_count || 0,
-      views_count: trendData.views_count || 0,
+      likes_count: parseInt(trendData.likes_count) || 0,
+      comments_count: parseInt(trendData.comments_count) || 0,
+      shares_count: parseInt(trendData.shares_count) || 0,
+      views_count: parseInt(trendData.views_count) || 0,
       hashtags: trendData.hashtags || [],
       thumbnail_url: trendData.thumbnail_url || null,
-      posted_at: trendData.posted_at || null
+      posted_at: trendData.posted_at || null,
+      calculated_payout: calculatedPayout,
+      verification_status: 'pending',
+      created_at: new Date().toISOString()
     };
     
     // Insert the finance trend
     const { data: insertedTrend, error: insertError } = await supabase
       .from('finance_trends')
       .insert(financeTrend)
-      .select('*, user:profiles!finance_trends_user_id_fkey(username, avatar_url)')
+      .select()
       .single();
     
     if (insertError) {
       console.error('Error inserting finance trend:', insertError);
+      
+      // Check for specific errors
+      if (insertError.message?.includes('finance_trends')) {
+        return NextResponse.json(
+          { error: 'Database table not found. Please ensure database is set up correctly.' },
+          { status: 500 }
+        );
+      }
+      
       return NextResponse.json(
         { error: 'Failed to submit trend', details: insertError.message },
         { status: 500 }
       );
     }
     
-    // Update user earnings (pending verification)
+    // Update or create user earnings record
     const { error: earningsError } = await supabase
       .from('user_earnings')
       .upsert({
         user_id: user.id,
-        pending_earnings: supabase.raw(`pending_earnings + ${insertedTrend.calculated_payout}`)
+        pending_earnings: calculatedPayout,
+        updated_at: new Date().toISOString()
       }, {
-        onConflict: 'user_id'
+        onConflict: 'user_id',
+        ignoreDuplicates: false
       });
     
     if (earningsError) {
       console.error('Error updating user earnings:', earningsError);
+      // Don't fail the whole request if earnings update fails
     }
     
     return NextResponse.json({
       success: true,
       trend: insertedTrend,
-      message: `Trend submitted! Estimated payout: $${insertedTrend.calculated_payout.toFixed(2)}`
+      message: `Trend submitted! Estimated payout: $${calculatedPayout.toFixed(2)}`
     });
     
   } catch (error: any) {
@@ -119,15 +134,17 @@ export async function GET(request: NextRequest) {
     const offset = parseInt(searchParams.get('offset') || '0');
     
     // Create Supabase client
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+    const supabase = createRouteHandlerClient({ cookies });
+    
+    // Get the authenticated user
+    const { data: { user } } = await supabase.auth.getUser();
     
     // Build query
     let query = supabase
       .from('finance_trends')
       .select(`
         *,
-        user:profiles!finance_trends_user_id_fkey(username, avatar_url),
-        verifications:finance_trend_verifications(*)
+        user:profiles!finance_trends_user_id_fkey(username, avatar_url)
       `)
       .order('created_at', { ascending: false })
       .range(offset, offset + limit - 1);
@@ -139,6 +156,9 @@ export async function GET(request: NextRequest) {
     
     if (userId) {
       query = query.eq('user_id', userId);
+    } else if (user && !userId) {
+      // If no specific userId requested, show only the current user's trends
+      query = query.eq('user_id', user.id);
     }
     
     const { data: trends, error } = await query;
@@ -152,7 +172,7 @@ export async function GET(request: NextRequest) {
     }
     
     return NextResponse.json({
-      trends,
+      trends: trends || [],
       count: trends?.length || 0,
       offset,
       limit
@@ -172,26 +192,15 @@ export async function PATCH(request: NextRequest) {
   try {
     const { trendId, verification } = await request.json();
     
-    // Get the user's session
-    const cookieStore = cookies();
-    const authToken = cookieStore.get('sb-auth-token')?.value;
-    
-    if (!authToken) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
-    
     // Create Supabase client
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+    const supabase = createRouteHandlerClient({ cookies });
     
-    // Verify the user
-    const { data: { user }, error: authError } = await supabase.auth.getUser(authToken);
+    // Get the authenticated user
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
     
     if (authError || !user) {
       return NextResponse.json(
-        { error: 'Invalid authentication' },
+        { error: 'Unauthorized' },
         { status: 401 }
       );
     }
@@ -207,23 +216,6 @@ export async function PATCH(request: NextRequest) {
       return NextResponse.json(
         { error: 'Insufficient permissions' },
         { status: 403 }
-      );
-    }
-    
-    // Insert verification record
-    const { error: verificationError } = await supabase
-      .from('finance_trend_verifications')
-      .insert({
-        trend_id: trendId,
-        verifier_id: user.id,
-        ...verification
-      });
-    
-    if (verificationError) {
-      console.error('Error inserting verification:', verificationError);
-      return NextResponse.json(
-        { error: 'Failed to save verification' },
-        { status: 500 }
       );
     }
     
@@ -254,14 +246,25 @@ export async function PATCH(request: NextRequest) {
     }
     
     // Update user earnings if approved
-    if (isApproved) {
-      const { error: earningsError } = await supabase.rpc('transfer_pending_to_available', {
-        p_user_id: updatedTrend.user_id,
-        p_amount: updatedTrend.calculated_payout
-      });
+    if (isApproved && updatedTrend) {
+      const { data: earnings } = await supabase
+        .from('user_earnings')
+        .select('pending_earnings, available_earnings')
+        .eq('user_id', updatedTrend.user_id)
+        .single();
       
-      if (earningsError) {
-        console.error('Error updating earnings:', earningsError);
+      if (earnings) {
+        const newPending = Math.max(0, (earnings.pending_earnings || 0) - updatedTrend.calculated_payout);
+        const newAvailable = (earnings.available_earnings || 0) + updatedTrend.calculated_payout;
+        
+        await supabase
+          .from('user_earnings')
+          .update({
+            pending_earnings: newPending,
+            available_earnings: newAvailable,
+            updated_at: new Date().toISOString()
+          })
+          .eq('user_id', updatedTrend.user_id);
       }
     }
     
