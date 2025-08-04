@@ -10,10 +10,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       handleCapture(request.data);
       break;
       
-    case 'quickSubmit':
-      handleQuickSubmit(request.data);
-      break;
-      
+    // Quick submit removed
     case 'getCapturedTrends':
       sendResponse({ trends: capturedTrends });
       break;
@@ -50,78 +47,12 @@ function handleCapture(data) {
     message: `Captured ${data.platform} trend from ${data.creator_handle || 'Unknown'}`,
     buttons: [
       { title: 'View Captured' },
-      { title: 'Submit Now' }
+      { title: 'Open WaveSight' }
     ]
   });
 }
 
-// Handle quick submit
-async function handleQuickSubmit(data) {
-  try {
-    // Check if user is logged in to WaveSight
-    const authToken = await getAuthToken();
-    
-    if (!authToken) {
-      // Open WaveSight login page
-      chrome.tabs.create({
-        url: 'http://localhost:3000/login?from=extension&return=submit'
-      });
-      return;
-    }
-    
-    // Submit directly to WaveSight API
-    const response = await fetch('http://localhost:3000/api/trends/quick-submit', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${authToken}`
-      },
-      body: JSON.stringify({
-        url: data.url,
-        platform: data.platform,
-        title: `${data.platform} trend by ${data.creator_handle}`,
-        category: detectCategory(data),
-        creator_handle: data.creator_handle,
-        creator_name: data.creator_name,
-        post_caption: data.post_caption || data.video_title,
-        likes_count: data.likes_count || 0,
-        comments_count: data.comments_count || data.replies_count || 0,
-        shares_count: data.shares_count || 0,
-        views_count: data.views_count || 0,
-        hashtags: data.hashtags || [],
-        auto_captured: true
-      })
-    });
-    
-    if (response.ok) {
-      // Show success notification
-      chrome.notifications.create({
-        type: 'basic',
-        iconUrl: 'icon128.png',
-        title: 'Trend Submitted!',
-        message: 'Your trend has been submitted to WaveSight',
-        buttons: [
-          { title: 'View in Timeline' }
-        ]
-      });
-    } else {
-      throw new Error('Failed to submit');
-    }
-  } catch (error) {
-    console.error('Quick submit error:', error);
-    
-    // Show error notification
-    chrome.notifications.create({
-      type: 'basic',
-      iconUrl: 'icon128.png',
-      title: 'Submission Failed',
-      message: 'Please try again or submit manually',
-      buttons: [
-        { title: 'Open WaveSight' }
-      ]
-    });
-  }
-}
+// Quick submit functionality removed
 
 // Detect category based on content
 function detectCategory(data) {

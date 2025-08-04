@@ -62,3 +62,55 @@ ios/
 *.tfstate
 *.tfstate.*
 .terraform/.env
+
+# Logs
+*.log
+logs/
+backend-server.log
+backend.log
+web-server.log
+dev.log
+
+# Backend Python
+backend/venv/
+backend/__pycache__/
+backend/*.pyc
+backend/.env
+
+# Mobile specific
+mobile/node_modules/
+mobile/.expo/
+mobile/ios/Pods/
+mobile/android/build/
+mobile/android/.gradle/
+
+# Supabase
+supabase/.env
+supabase/.env.local
+
+# Vercel
+.vercel
+
+# Docker
+*.pid
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# Editor directories
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Temporary files
+*.tmp
+*.temp
+*~
+
+# Environment variables
+.env
+.env.local
+.env.production
+.env.development

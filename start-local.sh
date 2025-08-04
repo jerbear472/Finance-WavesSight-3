@@ -1,62 +1,34 @@
 #!/bin/bash
 
-echo "🚀 Starting WaveSight Local Development"
-echo "====================================="
+echo "🚀 Starting Finance WaveSight 3 Local Development"
+echo "================================================"
 
-# Colors
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-NC='\033[0m'
-
-# Start backend
-echo -e "\n${YELLOW}Starting Backend API...${NC}"
-cd backend
-if [ ! -d "venv" ]; then
-    echo "Creating Python virtual environment..."
-    python3 -m venv venv
-    source venv/bin/activate
-    pip install -r requirements.txt
-else
-    source venv/bin/activate
-fi
-
-# Start backend in background
-python app/main.py &
-BACKEND_PID=$!
-echo -e "${GREEN}✓ Backend started on http://localhost:8000${NC}"
-echo -e "${BLUE}  API Docs: http://localhost:8000/docs${NC}"
-
-# Start frontend
-echo -e "\n${YELLOW}Starting Frontend...${NC}"
-cd ../web
-
-# Install dependencies if needed
-if [ ! -d "node_modules" ]; then
-    echo "Installing frontend dependencies..."
-    npm install
-fi
-
-# Start frontend
-echo -e "${GREEN}✓ Starting frontend on http://localhost:3000${NC}"
-npm run dev &
-FRONTEND_PID=$!
-
-# Function to kill both processes on exit
-cleanup() {
-    echo -e "\n${YELLOW}Shutting down...${NC}"
-    kill $BACKEND_PID 2>/dev/null
-    kill $FRONTEND_PID 2>/dev/null
-    exit
+# Function to check if port is in use
+check_port() {
+    if lsof -Pi :$1 -sTCP:LISTEN -t >/dev/null ; then
+        echo "⚠️  Port $1 is already in use. Killing existing process..."
+        lsof -ti:$1 | xargs kill -9
+        sleep 1
+    fi
 }
 
-# Set up trap to catch Ctrl+C
-trap cleanup INT
+# Check and clear port 3000
+check_port 3000
 
-echo -e "\n${GREEN}🎉 WaveSight is running!${NC}"
-echo -e "\nFrontend: ${BLUE}http://localhost:3000${NC}"
-echo -e "Backend API: ${BLUE}http://localhost:8000/docs${NC}"
-echo -e "\n${YELLOW}Press Ctrl+C to stop all services${NC}\n"
+# Navigate to web directory
+cd "$(dirname "$0")/web"
 
-# Wait for processes
-wait
+echo "📦 Checking dependencies..."
+npm install
+
+echo ""
+echo "🌐 Starting Next.js development server..."
+echo "========================================="
+echo "📍 Application: http://localhost:3000"
+echo "📋 Finance Trends: http://localhost:3000/submit"
+echo "✅ Verification: http://localhost:3000/verify"
+echo "========================================="
+echo ""
+
+# Start the development server
+npm run dev

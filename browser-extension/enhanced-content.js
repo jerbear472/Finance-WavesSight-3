@@ -89,10 +89,6 @@ class EnhancedTrendCapture {
               <span class="ws-capture-icon">📸</span>
               Capture This Trend
             </button>
-            <button class="ws-quick-submit">
-              <span class="ws-submit-icon">🚀</span>
-              Quick Submit
-            </button>
           </div>
         </div>
         <div class="ws-minimized" style="display: none;">
@@ -261,13 +257,13 @@ class EnhancedTrendCapture {
         gap: 8px;
       }
       
-      .ws-capture-btn, .ws-quick-submit {
-        flex: 1;
-        padding: 10px;
+      .ws-capture-btn {
+        width: 100%;
+        padding: 12px;
         border: none;
         border-radius: 8px;
-        font-size: 13px;
-        font-weight: 500;
+        font-size: 14px;
+        font-weight: 600;
         cursor: pointer;
         transition: all 0.2s;
         display: flex;
@@ -283,16 +279,6 @@ class EnhancedTrendCapture {
       
       .ws-capture-btn:hover {
         background: #4338CA;
-      }
-      
-      .ws-quick-submit {
-        background: rgba(16, 185, 129, 0.1);
-        color: #10B981;
-        border: 1px solid rgba(16, 185, 129, 0.2);
-      }
-      
-      .ws-quick-submit:hover {
-        background: rgba(16, 185, 129, 0.2);
       }
       
       .ws-minimized {
@@ -339,7 +325,6 @@ class EnhancedTrendCapture {
     const minimizedView = this.widget.querySelector('.ws-minimized');
     const container = this.widget.querySelector('.ws-widget-container');
     const captureBtn = this.widget.querySelector('.ws-capture-btn');
-    const quickSubmitBtn = this.widget.querySelector('.ws-quick-submit');
     
     // Minimize/maximize
     minimizeBtn.addEventListener('click', () => {
@@ -352,9 +337,6 @@ class EnhancedTrendCapture {
     
     // Capture button
     captureBtn.addEventListener('click', () => this.captureData());
-    
-    // Quick submit button
-    quickSubmitBtn.addEventListener('click', () => this.quickSubmit());
     
     // Make widget draggable
     this.makeWidgetDraggable();
@@ -836,29 +818,6 @@ class EnhancedTrendCapture {
     }, 2000);
   }
 
-  async quickSubmit() {
-    if (!this.currentData) return;
-    
-    const submitBtn = this.widget.querySelector('.ws-quick-submit');
-    submitBtn.disabled = true;
-    submitBtn.innerHTML = '<span>⏳</span> Submitting...';
-    
-    // Send to WaveSight with auto-submit flag
-    chrome.runtime.sendMessage({
-      action: 'quickSubmit',
-      data: this.currentData
-    });
-    
-    // Show success
-    setTimeout(() => {
-      submitBtn.disabled = false;
-      submitBtn.innerHTML = '<span>✅</span> Submitted!';
-      
-      setTimeout(() => {
-        submitBtn.innerHTML = '<span class="ws-submit-icon">🚀</span> Quick Submit';
-      }, 2000);
-    }, 1000);
-  }
 }
 
 // Initialize the enhanced capture system
