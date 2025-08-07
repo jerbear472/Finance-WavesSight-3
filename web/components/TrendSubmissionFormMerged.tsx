@@ -152,6 +152,9 @@ interface TrendSubmissionFormProps {
 }
 
 export default function TrendSubmissionFormMerged({ onClose, onSubmit, initialUrl = '' }: TrendSubmissionFormProps) {
+  console.log('=== TrendSubmissionFormMerged RENDERED ===');
+  console.log('Props:', { initialUrl, onClose: !!onClose, onSubmit: !!onSubmit });
+  
   const { user } = useAuth();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [step, setStep] = useState(1);

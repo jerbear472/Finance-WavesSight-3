@@ -133,20 +133,43 @@ export default function ScrollDashboard() {
 
   // Calculate quality and payment when form is opened
   const handleFormOpen = async (url: string) => {
-    if (!user || !spotterMetrics) return;
+    console.log('handleFormOpen called with URL:', url);
+    console.log('User in handleFormOpen:', user);
+    console.log('SpotterMetrics in handleFormOpen:', spotterMetrics);
     
-    // Calculate estimated quality for preview
-    const mockTrendData = { url, platform: 'unknown' };
-    const quality = performanceService.calculateTrendQuality(mockTrendData);
-    setQualityMetrics(quality);
+    if (!user) {
+      console.log('No user in handleFormOpen - returning');
+      return;
+    }
     
-    // Calculate estimated payment
-    const payment = await performanceService.calculateTrendPayment(
-      user.id,
-      mockTrendData,
-      quality
-    );
-    setEstimatedPayment(payment);
+    if (!spotterMetrics) {
+      console.log('No spotterMetrics in handleFormOpen - continuing anyway');
+      // Don't return, let it continue without metrics
+    }
+    
+    try {
+      // Calculate estimated quality for preview
+      const mockTrendData = { url, platform: 'unknown' };
+      console.log('Calculating quality for preview...');
+      const quality = performanceService.calculateTrendQuality(mockTrendData);
+      console.log('Preview quality:', quality);
+      setQualityMetrics(quality);
+      
+      // Calculate estimated payment
+      if (user?.id) {
+        console.log('Calculating payment for preview...');
+        const payment = await performanceService.calculateTrendPayment(
+          user.id,
+          mockTrendData,
+          quality
+        );
+        console.log('Preview payment:', payment);
+        setEstimatedPayment(payment);
+      }
+    } catch (err) {
+      console.error('Error in handleFormOpen calculations:', err);
+      // Don't throw, just log the error and continue
+    }
   };
 
   const handleTrendSubmit = async (trendData: any) => {
@@ -383,23 +406,39 @@ export default function ScrollDashboard() {
 
   const handleQuickSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('handleQuickSubmit called with URL:', trendLink);
+    console.log('=== handleQuickSubmit START ===');
+    console.log('URL entered:', trendLink);
+    console.log('User:', user);
+    console.log('showTrendForm before:', showTrendForm);
     
     if (!trendLink.trim()) {
-      console.log('No trend link provided');
+      console.log('No trend link provided - exiting');
       return;
     }
     
     const normalizedUrl = normalizeUrl(trendLink);
+    console.log('Normalized URL:', normalizedUrl);
+    console.log('Already logged trends:', loggedTrends);
+    
     if (loggedTrends.includes(normalizedUrl)) {
+      console.log('URL already logged - showing error');
       setSubmitMessage({ type: 'error', text: 'Already logged!' });
       setTimeout(() => setSubmitMessage(null), 3000);
       return;
     }
     
-    console.log('Opening form with URL:', trendLink);
-    handleFormOpen(trendLink);
+    console.log('Calling handleFormOpen...');
+    try {
+      handleFormOpen(trendLink);
+      console.log('handleFormOpen completed');
+    } catch (err) {
+      console.error('Error in handleFormOpen:', err);
+    }
+    
+    console.log('Setting showTrendForm to true...');
     setShowTrendForm(true);
+    console.log('showTrendForm after:', true);
+    console.log('=== handleQuickSubmit END ===');
   };
 
   return (
@@ -712,16 +751,20 @@ export default function ScrollDashboard() {
 
       {/* Trend Submission Form Modal */}
       {showTrendForm && (
-        <TrendSubmissionFormMerged
-          onClose={() => {
-            setShowTrendForm(false);
-            setTrendLink('');
-            setQualityMetrics(null);
-            setEstimatedPayment(null);
-          }}
-          onSubmit={handleTrendSubmit}
-          initialUrl={trendLink}
-        />
+        <>
+          {console.log('Rendering TrendSubmissionFormMerged, showTrendForm:', showTrendForm)}
+          <TrendSubmissionFormMerged
+            onClose={() => {
+              console.log('Form onClose called');
+              setShowTrendForm(false);
+              setTrendLink('');
+              setQualityMetrics(null);
+              setEstimatedPayment(null);
+            }}
+            onSubmit={handleTrendSubmit}
+            initialUrl={trendLink}
+          />
+        </>
       )}
 
       {/* Screenshot Upload Modal */}
