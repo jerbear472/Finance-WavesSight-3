@@ -343,20 +343,24 @@ export default function ScrollDashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-950">
-      <div className="container mx-auto px-6 py-8 max-w-7xl">
-        {/* Clean Header */}
-        <div className="mb-8 flex items-center justify-between">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900/20 to-black">
+      <div className="container mx-auto px-4 py-6 max-w-6xl safe-area-top safe-area-bottom">
+        {/* Compact Header */}
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-6 flex items-center justify-between"
+        >
           <button
             onClick={() => router.push('/dashboard')}
-            className="p-3 hover:bg-gray-900 rounded-xl transition-colors"
+            className="p-3 bg-gray-800/50 hover:bg-gray-700/50 rounded-xl transition-all hover:scale-105"
           >
-            <ArrowLeft className="w-5 h-5 text-gray-400" />
+            <ArrowLeft className="w-5 h-5 text-gray-300" />
           </button>
           
           <div className="flex items-center gap-3">
-            <WaveLogo size={32} animated={true} showTitle={false} />
-            <h1 className="text-2xl font-semibold text-white">Trend Spotting</h1>
+            <WaveLogo size={36} animated={true} showTitle={false} />
+            <h1 className="text-2xl font-bold text-white">Trend Spotting Hub</h1>
           </div>
 
           {/* Performance Tier Badge */}
@@ -367,7 +371,7 @@ export default function ScrollDashboard() {
               onTierChange={() => loadPerformanceMetrics()}
             />
           )}
-        </div>
+        </motion.div>
 
         {/* Main Content Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

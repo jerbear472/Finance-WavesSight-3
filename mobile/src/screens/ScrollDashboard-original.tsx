@@ -38,11 +38,16 @@ const MainDashboard: React.FC = () => {
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView showsVerticalScrollIndicator={false}>
-        {/* Cleaner Header */}
-        <View style={styles.header}>
-          <Text style={styles.headerTitle}>WaveSight</Text>
-          <Text style={styles.headerSubtitle}>Trend Spotting</Text>
-        </View>
+        {/* Header */}
+        <LinearGradient
+          colors={['#0080ff', '#00d4ff']}
+          style={styles.header}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+        >
+          <Text style={styles.headerTitle}>WaveSite</Text>
+          <Text style={styles.headerSubtitle}>Ride the wave of trends</Text>
+        </LinearGradient>
 
         {/* Scroll Session Component */}
         <ScrollSession
@@ -98,15 +103,17 @@ export const ScrollDashboard: React.FC = () => {
     <Tab.Navigator
       screenOptions={{
         tabBarStyle: {
-          backgroundColor: '#111111',
-          borderTopWidth: 1,
-          borderTopColor: '#1F2937',
-          height: 64,
+          backgroundColor: enhancedTheme.colors.surface,
+          borderTopWidth: 0,
+          elevation: 20,
+          shadowOpacity: 0.1,
+          shadowRadius: 20,
+          height: 60,
           paddingBottom: 8,
           paddingTop: 8,
         },
-        tabBarActiveTintColor: '#0080ff',
-        tabBarInactiveTintColor: '#6B7280',
+        tabBarActiveTintColor: enhancedTheme.colors.primary,
+        tabBarInactiveTintColor: enhancedTheme.colors.textSecondary,
         headerShown: false,
       }}
     >
@@ -153,45 +160,36 @@ export const ScrollDashboard: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#000000',
+    backgroundColor: enhancedTheme.colors.background,
   },
   header: {
-    paddingHorizontal: 24,
-    paddingTop: 30,
-    paddingBottom: 20,
+    padding: 24,
+    paddingTop: 40,
     alignItems: 'center',
-    backgroundColor: '#111111',
-    borderBottomWidth: 1,
-    borderBottomColor: '#1F2937',
   },
   headerTitle: {
-    fontSize: 28,
+    fontSize: 32,
     fontWeight: '700',
     color: '#FFFFFF',
-    letterSpacing: -0.5,
   },
   headerSubtitle: {
-    fontSize: 14,
-    color: '#6B7280',
+    fontSize: 16,
+    color: '#FFFFFF80',
     marginTop: 4,
-    fontWeight: '500',
   },
   quickStats: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'space-around',
     paddingHorizontal: 20,
-    marginVertical: 24,
-    gap: 12,
+    marginVertical: 20,
   },
   statCard: {
     alignItems: 'center',
-    backgroundColor: '#111111',
-    padding: 20,
+    backgroundColor: enhancedTheme.colors.surface,
+    padding: 16,
     borderRadius: 16,
     flex: 1,
     marginHorizontal: 6,
-    borderWidth: 1,
-    borderColor: '#1F2937',
   },
   statValue: {
     fontSize: 24,
