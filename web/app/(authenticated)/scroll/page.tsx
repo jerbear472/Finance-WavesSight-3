@@ -635,13 +635,62 @@ export default function ScrollDashboard() {
             }}
           />
 
-          {/* Submit New Trend */}
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="bg-gradient-to-br from-blue-600/10 via-purple-600/10 to-indigo-600/10 backdrop-blur-sm rounded-2xl p-6 border border-blue-500/20 shadow-xl relative overflow-hidden"
-          >
+          {/* Tab Navigation */}
+          <div className="flex gap-2 mb-6 overflow-x-auto">
+            <button
+              onClick={() => setActiveTab('submit')}
+              className={`px-4 py-2 rounded-lg font-medium transition-all flex items-center gap-2 whitespace-nowrap ${
+                activeTab === 'submit' 
+                  ? 'bg-blue-500/20 text-blue-400 border border-blue-500/30' 
+                  : 'bg-gray-800/50 text-gray-400 hover:bg-gray-700/50'
+              }`}
+            >
+              <Send className="w-4 h-4" />
+              Quick Submit
+            </button>
+            <button
+              onClick={() => setActiveTab('bulk')}
+              className={`px-4 py-2 rounded-lg font-medium transition-all flex items-center gap-2 whitespace-nowrap ${
+                activeTab === 'bulk' 
+                  ? 'bg-blue-500/20 text-blue-400 border border-blue-500/30' 
+                  : 'bg-gray-800/50 text-gray-400 hover:bg-gray-700/50'
+              }`}
+            >
+              <Upload className="w-4 h-4" />
+              Bulk Upload
+            </button>
+            <button
+              onClick={() => setActiveTab('challenges')}
+              className={`px-4 py-2 rounded-lg font-medium transition-all flex items-center gap-2 whitespace-nowrap ${
+                activeTab === 'challenges' 
+                  ? 'bg-blue-500/20 text-blue-400 border border-blue-500/30' 
+                  : 'bg-gray-800/50 text-gray-400 hover:bg-gray-700/50'
+              }`}
+            >
+              <Target className="w-4 h-4" />
+              Challenges
+            </button>
+            <button
+              onClick={() => setActiveTab('history')}
+              className={`px-4 py-2 rounded-lg font-medium transition-all flex items-center gap-2 whitespace-nowrap ${
+                activeTab === 'history' 
+                  ? 'bg-blue-500/20 text-blue-400 border border-blue-500/30' 
+                  : 'bg-gray-800/50 text-gray-400 hover:bg-gray-700/50'
+              }`}
+            >
+              <Clock className="w-4 h-4" />
+              History
+            </button>
+          </div>
+
+          {/* Submit New Trend (Default Tab) */}
+          {activeTab === 'submit' && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              className="bg-gradient-to-br from-blue-600/10 via-purple-600/10 to-indigo-600/10 backdrop-blur-sm rounded-2xl p-6 border border-blue-500/20 shadow-xl relative overflow-hidden"
+            >
             <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-purple-500/5 rounded-2xl"></div>
             
             <div className="flex items-center justify-between mb-6 relative z-10">
