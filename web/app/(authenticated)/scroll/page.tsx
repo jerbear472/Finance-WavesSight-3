@@ -151,6 +151,9 @@ export default function ScrollDashboard() {
 
   const handleTrendSubmit = async (trendData: any) => {
     console.log('handleTrendSubmit called with:', trendData);
+    console.log('User state:', user);
+    console.log('SpotterMetrics state:', spotterMetrics);
+    
     try {
       if (!user?.id) {
         console.log('No user ID found');
@@ -180,16 +183,32 @@ export default function ScrollDashboard() {
       }
 
       // Calculate quality metrics
-      const qualityMetrics = performanceService.calculateTrendQuality(trendData);
-      setQualityMetrics(qualityMetrics);
+      console.log('Calculating quality metrics...');
+      let qualityMetrics;
+      try {
+        qualityMetrics = performanceService.calculateTrendQuality(trendData);
+        console.log('Quality metrics:', qualityMetrics);
+        setQualityMetrics(qualityMetrics);
+      } catch (qError) {
+        console.error('Error calculating quality:', qError);
+        throw new Error('Failed to calculate trend quality');
+      }
 
       // Calculate payment
-      const paymentInfo = await performanceService.calculateTrendPayment(
-        user.id,
-        trendData,
-        qualityMetrics
-      );
-      setEstimatedPayment(paymentInfo);
+      console.log('Calculating payment...');
+      let paymentInfo;
+      try {
+        paymentInfo = await performanceService.calculateTrendPayment(
+          user.id,
+          trendData,
+          qualityMetrics
+        );
+        console.log('Payment info:', paymentInfo);
+        setEstimatedPayment(paymentInfo);
+      } catch (pError) {
+        console.error('Error calculating payment:', pError);
+        throw new Error('Failed to calculate payment');
+      }
 
       // Upload image if present
       let imageUrl = null;
@@ -258,13 +277,27 @@ export default function ScrollDashboard() {
         payment_breakdown: paymentInfo.breakdown
       };
 
+      console.log('Inserting trend submission to database...');
+      console.log('Insert object:', JSON.stringify(insertObject, null, 2));
+      
       const { data, error } = await supabase
         .from('trend_submissions')
         .insert(insertObject)
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Database insert error:', error);
+        console.error('Error details:', {
+          message: error.message,
+          details: error.details,
+          hint: error.hint,
+          code: error.code
+        });
+        throw error;
+      }
+      
+      console.log('Trend submission inserted successfully:', data);
 
       // Update spotter metrics
       await performanceService.updateSpotterMetrics(
