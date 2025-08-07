@@ -20,7 +20,7 @@ export default function Home() {
           </p>
           
           <p className="text-lg text-gray-500 dark:text-gray-500 mb-8 max-w-2xl mx-auto">
-            Earn $1-10 for every viral stock or crypto movement you find
+            Earn money for every financial trend • Get bonuses when markets move
           </p>
           
           {/* Earning Highlight Box */}
@@ -29,10 +29,10 @@ export default function Home() {
               <div className="text-4xl">💰</div>
               <div className="text-center sm:text-left">
                 <p className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-                  Real Money for Real Financial Signals
+                  Volume-Based Earnings Model
                 </p>
                 <p className="text-gray-700 dark:text-gray-300">
-                  Average spotter earns $1,200/month • Top performers earn $5,000+
+                  $0.05-0.20 per trend • $5+ viral bonuses • $25+ market move bonuses
                 </p>
               </div>
             </div>
@@ -61,18 +61,18 @@ export default function Home() {
           {/* Stats */}
           <div className="flex flex-wrap justify-center items-center gap-8 mt-20 text-sm text-gray-500 dark:text-gray-500">
             <div className="text-center">
-              <div className="text-2xl font-semibold text-gray-900 dark:text-gray-100">$2.4M+</div>
-              <div>Paid to Spotters</div>
+              <div className="text-2xl font-semibold text-gray-900 dark:text-gray-100">50K+</div>
+              <div>Active Spotters</div>
             </div>
             <div className="hidden sm:block w-px h-8 bg-gray-300 dark:bg-gray-700"></div>
             <div className="text-center">
-              <div className="text-2xl font-semibold text-gray-900 dark:text-gray-100">87%</div>
-              <div>Accuracy Rate</div>
+              <div className="text-2xl font-semibold text-gray-900 dark:text-gray-100">$5</div>
+              <div>Min Cashout</div>
             </div>
             <div className="hidden sm:block w-px h-8 bg-gray-300 dark:bg-gray-700"></div>
             <div className="text-center">
-              <div className="text-2xl font-semibold text-gray-900 dark:text-gray-100">6 hrs</div>
-              <div>Avg Early Detection</div>
+              <div className="text-2xl font-semibold text-gray-900 dark:text-gray-100">24/7</div>
+              <div>Instant Payments</div>
             </div>
           </div>
         </div>
@@ -104,18 +104,18 @@ export default function Home() {
                 <p className="text-gray-600 dark:text-gray-400">Share the link, ticker, and why it might move markets</p>
               </div>
               <div className="bg-gray-50 dark:bg-neutral-900 rounded-lg p-3 text-sm">
-                <p className="text-gray-700 dark:text-gray-300">Takes 30 seconds • Get instant payment estimate</p>
+                <p className="text-gray-700 dark:text-gray-300">Quick mobile capture • Bulk submission tools</p>
               </div>
             </div>
 
             <div className="bg-white dark:bg-neutral-800 rounded-xl p-6 shadow-sm border border-gray-100 dark:border-neutral-700">
               <div className="text-center mb-4">
                 <span className="text-4xl">💰</span>
-                <h3 className="font-semibold text-lg mt-3 mb-2">3. Get Paid</h3>
-                <p className="text-gray-600 dark:text-gray-400">Earn $1-10 instantly, plus bonuses if markets move</p>
+                <h3 className="font-semibold text-lg mt-3 mb-2">3. Earn & Grow</h3>
+                <p className="text-gray-600 dark:text-gray-400">Micro-payments add up • Daily challenges • Performance bonuses</p>
               </div>
               <div className="bg-gray-50 dark:bg-neutral-900 rounded-lg p-3 text-sm">
-                <p className="text-gray-700 dark:text-gray-300">Cash out anytime • Direct deposit available</p>
+                <p className="text-gray-700 dark:text-gray-300">$5 minimum cashout • Weekly payouts • Multiple payment methods</p>
               </div>
             </div>
           </div>
@@ -146,25 +146,30 @@ export default function Home() {
               <div className="p-6">
                 <div className="text-4xl mb-4 text-center">💰</div>
                 <h3 className="text-xl font-semibold mb-3 text-center">Financial Trend Spotter</h3>
-                <p className="text-gray-600 dark:text-gray-400 text-center mb-4">Earn $1-10 per financial signal</p>
+                <p className="text-gray-600 dark:text-gray-400 text-center mb-4">Volume-based micro-payments</p>
                 <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-400">
                   <li className="flex items-center">
                     <span className="text-green-500 mr-2">✓</span>
-                    Spot viral stock & crypto movements
+                    $0.05-0.20 per quality submission
                   </li>
                   <li className="flex items-center">
                     <span className="text-green-500 mr-2">✓</span>
-                    $5 for meme stock momentum
+                    Submit 50-100 trends daily
                   </li>
                   <li className="flex items-center">
                     <span className="text-green-500 mr-2">✓</span>
-                    $10 for insider/leak rumors
+                    $5+ viral trend bonuses
                   </li>
                   <li className="flex items-center">
                     <span className="text-green-500 mr-2">✓</span>
-                    +$25-100 bonus if stock moves
+                    $25+ when markets move 2%+
                   </li>
                 </ul>
+                <div className="mt-4 bg-green-50 dark:bg-green-900/20 rounded p-3 text-xs">
+                  <p className="text-green-700 dark:text-green-300">
+                    <strong>Realistic earnings:</strong> $200-800/month active spotting
+                  </p>
+                </div>
               </div>
             </div>
             

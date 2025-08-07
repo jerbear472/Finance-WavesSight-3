@@ -24,7 +24,7 @@ export const EARNINGS = {
   VERIFICATION_REWARD: 0.05,        // Amount earned for participating in verification
   
   // Cash out requirements
-  MINIMUM_CASHOUT: 10.00,           // Minimum approved earnings required to cash out
+  MINIMUM_CASHOUT: 5.00,            // Minimum approved earnings required to cash out (lowered for micro-payments)
   
   // Verification requirements
   MIN_VOTES_REQUIRED: 3,            // Minimum votes needed for trend verification
