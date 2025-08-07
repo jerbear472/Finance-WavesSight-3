@@ -446,229 +446,77 @@ export default function ScrollDashboard() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900/20 to-black">
       <div className="container mx-auto px-4 py-6 max-w-6xl safe-area-top safe-area-bottom">
-        {/* Enhanced Header */}
+        {/* Compact Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-8"
+          className="mb-6 flex items-center justify-between"
         >
-          <div className="flex items-center justify-between mb-4">
-            <button
-              onClick={() => router.push('/dashboard')}
-              className="p-3 bg-gray-800/50 hover:bg-gray-700/50 rounded-xl transition-all hover:scale-105"
-            >
-              <ArrowLeft className="w-5 h-5 text-gray-300" />
-            </button>
-            
-            <div className="flex items-center gap-3">
-              <WaveLogo size={36} animated={true} showTitle={false} />
-              <h1 className="text-2xl font-bold text-white">Trend Spotting Hub</h1>
-            </div>
-
-            {/* Performance Tier Badge */}
-            {user && !loadingMetrics && spotterMetrics && (
-              <SpotterTierDisplay 
-                userId={user.id} 
-                compact={true}
-                onTierChange={() => loadPerformanceMetrics()}
-              />
-            )}
-          </div>
+          <button
+            onClick={() => router.push('/dashboard')}
+            className="p-3 bg-gray-800/50 hover:bg-gray-700/50 rounded-xl transition-all hover:scale-105"
+          >
+            <ArrowLeft className="w-5 h-5 text-gray-300" />
+          </button>
           
-          {/* Social Media Quick Access */}
-          <div className="flex flex-wrap gap-2 justify-center">
-            {socialPlatforms.map((platform) => (
-              <button
-                key={platform.name}
-                onClick={() => window.open(platform.url, platform.name.toLowerCase().replace(' ', '_'), 'width=1200,height=800')}
-                className={`px-3 py-2 rounded-lg bg-gradient-to-r ${platform.color} text-white font-medium text-sm transition-all hover:scale-105 flex items-center gap-2`}
-              >
-                <span className="text-lg">{platform.icon}</span>
-                <span>{platform.name}</span>
-                <ExternalLink className="w-3 h-3" />
-              </button>
-            ))}
+          <div className="flex items-center gap-3">
+            <WaveLogo size={36} animated={true} showTitle={false} />
+            <h1 className="text-2xl font-bold text-white">Trend Spotting Hub</h1>
           </div>
+
+          {/* Performance Tier Badge */}
+          {user && !loadingMetrics && spotterMetrics && (
+            <SpotterTierDisplay 
+              userId={user.id} 
+              compact={true}
+              onTierChange={() => loadPerformanceMetrics()}
+            />
+          )}
         </motion.div>
 
-        {/* Earnings Overview */}
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-6 grid grid-cols-2 gap-4"
-        >
-          <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl p-4 border border-gray-700/50">
-            <p className="text-xs text-gray-400 font-medium">Today's Confirmed</p>
-            <p className="text-2xl font-bold text-emerald-400">{formatCurrency(todaysEarnings)}</p>
-          </div>
-          <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl p-4 border border-gray-700/50">
-            <p className="text-xs text-gray-400 font-medium">Pending Verification</p>
-            <p className="text-2xl font-bold text-yellow-400">{formatCurrency(todaysPendingEarnings)}</p>
-          </div>
-        </motion.div>
-
-        {/* Daily Challenge */}
-        {spotterMetrics?.dailyChallengeProgress && (
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mb-6 bg-purple-500/10 backdrop-blur-sm rounded-xl p-4 border border-purple-500/30"
-          >
-            <div className="flex items-center justify-between mb-3">
-              <div className="flex items-center gap-3">
-                <div className="bg-purple-500/20 p-2 rounded-lg">
-                  <Target className="w-5 h-5 text-purple-400" />
-                </div>
-                <div>
-                  <p className="text-white font-semibold">Daily Challenge</p>
-                  <p className="text-purple-200 text-sm">
-                    {spotterMetrics.dailyChallengeProgress.description}
-                  </p>
-                </div>
-              </div>
-              <div className="text-right">
-                <p className="text-xl font-bold text-purple-400">
-                  +${spotterMetrics.dailyChallengeProgress.reward.toFixed(2)}
-                </p>
-                <p className="text-xs text-purple-300">reward</p>
-              </div>
-            </div>
-            <div className="w-full bg-gray-700 rounded-full h-2 overflow-hidden">
+        {/* Main Content Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Left Column - Main Submission Area */}
+          <div className="lg:col-span-2 space-y-6">
+            {/* Session Required Notice */}
+            {!isScrolling && (
               <motion.div
-                className="h-full bg-gradient-to-r from-purple-500 to-pink-500"
-                initial={{ width: 0 }}
-                animate={{ 
-                  width: `${(spotterMetrics.dailyChallengeProgress.progress / 
-                    spotterMetrics.dailyChallengeProgress.target) * 100}%` 
-                }}
-              />
-            </div>
-          </motion.div>
-        )}
-
-        {/* Streak Status */}
-        {streak > 0 && (
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mb-6 bg-orange-500/20 backdrop-blur-sm rounded-xl p-4 border border-orange-500/30"
-          >
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="bg-orange-500/30 p-2 rounded-lg">
-                  <Flame className="w-5 h-5 text-orange-400" />
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="bg-blue-500/10 backdrop-blur-sm rounded-xl p-4 border border-blue-500/30"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="bg-blue-500/20 p-2 rounded-lg">
+                    <Clock className="w-5 h-5 text-blue-400" />
+                  </div>
+                  <div>
+                    <p className="text-white font-medium">Start a session to begin earning!</p>
+                    <p className="text-blue-200 text-sm">Trends can only be logged during active sessions</p>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-white font-semibold text-lg">
-                    {streak} Streak Active
-                  </p>
-                  <p className="text-orange-200 text-sm">
-                    {streakMultiplier}x speed multiplier
-                  </p>
-                </div>
-              </div>
-              <div className="text-right bg-black/30 px-3 py-2 rounded-lg">
-                <p className="text-white font-semibold text-xl">{timeRemaining}s</p>
-                <p className="text-orange-200 text-xs">left</p>
-              </div>
-            </div>
-          </motion.div>
-        )}
+              </motion.div>
+            )}
 
-        {/* Session Required Notice */}
-        {!isScrolling && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="mb-6 bg-blue-500/10 backdrop-blur-sm rounded-xl p-4 border border-blue-500/30"
-          >
-            <div className="flex items-center gap-3">
-              <div className="bg-blue-500/20 p-2 rounded-lg">
-                <Clock className="w-5 h-5 text-blue-400" />
-              </div>
-              <div>
-                <p className="text-white font-medium">Start a session to begin earning!</p>
-                <p className="text-blue-200 text-sm">Trends can only be logged during active sessions</p>
-              </div>
-            </div>
-          </motion.div>
-        )}
+            {/* Scroll Session Component */}
+            <ScrollSession
+              ref={scrollSessionRef}
+              onSessionStateChange={handleSessionStateChange}
+              onTrendLogged={handleTrendLogged}
+              streak={streak}
+              streakMultiplier={streakMultiplier}
+              onStreakUpdate={(streakCount, multiplier) => {
+                setStreak(streakCount);
+                setStreakMultiplier(multiplier);
+              }}
+            />
 
-        {/* Performance Stats */}
-        {spotterMetrics && (
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mb-6 grid grid-cols-2 sm:grid-cols-4 gap-3"
-          >
-            <div className="bg-gray-800/40 backdrop-blur-sm rounded-xl p-3 border border-gray-700/50">
-              <div className="flex items-center justify-between mb-1">
-                <CheckCircle className="w-4 h-4 text-green-400" />
-                <span className="text-xs text-gray-400">30d</span>
-              </div>
-              <p className="text-lg font-bold text-white">
-                {(spotterMetrics.trendApprovalRate30d * 100).toFixed(0)}%
-              </p>
-              <p className="text-xs text-gray-400">Approval Rate</p>
-            </div>
-            
-            <div className="bg-gray-800/40 backdrop-blur-sm rounded-xl p-3 border border-gray-700/50">
-              <div className="flex items-center justify-between mb-1">
-                <TrendingUp className="w-4 h-4 text-purple-400" />
-                <span className="text-xs text-gray-400">30d</span>
-              </div>
-              <p className="text-lg font-bold text-white">
-                {(spotterMetrics.trendViralRate30d * 100).toFixed(0)}%
-              </p>
-              <p className="text-xs text-gray-400">Viral Rate</p>
-            </div>
-            
-            <div className="bg-gray-800/40 backdrop-blur-sm rounded-xl p-3 border border-gray-700/50">
-              <div className="flex items-center justify-between mb-1">
-                <Sparkles className="w-4 h-4 text-yellow-400" />
-                <span className="text-xs text-gray-400">Quality</span>
-              </div>
-              <p className="text-lg font-bold text-white">
-                {(spotterMetrics.submissionQualityScore * 100).toFixed(0)}%
-              </p>
-              <p className="text-xs text-gray-400">Avg Score</p>
-            </div>
-            
-            <div className="bg-gray-800/40 backdrop-blur-sm rounded-xl p-3 border border-gray-700/50">
-              <div className="flex items-center justify-between mb-1">
-                <Flame className="w-4 h-4 text-orange-400" />
-                <span className="text-xs text-gray-400">Current</span>
-              </div>
-              <p className="text-lg font-bold text-white">
-                {spotterMetrics.consecutiveApprovedTrends}
-              </p>
-              <p className="text-xs text-gray-400">Approved Streak</p>
-            </div>
-          </motion.div>
-        )}
-
-        {/* Main Content */}
-        <div className="space-y-6">
-          {/* Scroll Session Component */}
-          <ScrollSession
-            ref={scrollSessionRef}
-            onSessionStateChange={handleSessionStateChange}
-            onTrendLogged={handleTrendLogged}
-            streak={streak}
-            streakMultiplier={streakMultiplier}
-            onStreakUpdate={(streakCount, multiplier) => {
-              setStreak(streakCount);
-              setStreakMultiplier(multiplier);
-            }}
-          />
-
-          {/* Submit New Trend */}
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="bg-gradient-to-br from-blue-600/10 via-purple-600/10 to-indigo-600/10 backdrop-blur-sm rounded-2xl p-6 border border-blue-500/20 shadow-xl relative overflow-hidden"
-          >
+            {/* Submit New Trend - PROMINENT */}
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              className="bg-gradient-to-br from-blue-600/10 via-purple-600/10 to-indigo-600/10 backdrop-blur-sm rounded-2xl p-6 border border-blue-500/20 shadow-xl relative overflow-hidden"
+            >
             <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-purple-500/5 rounded-2xl"></div>
             
             <div className="flex items-center justify-between mb-6 relative z-10">
@@ -768,42 +616,187 @@ export default function ScrollDashboard() {
                 <p className="text-sm font-semibold">{submitMessage.text}</p>
               </motion.div>
             )}
-          </motion.div>
+            </motion.div>
 
-          {/* Performance Overview Button */}
-          <motion.button
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            onClick={() => setShowPerformanceModal(true)}
-            className="w-full bg-gray-800/40 backdrop-blur-sm rounded-xl p-4 border border-gray-700/50 hover:bg-gray-800/60 transition-all flex items-center justify-between group"
-          >
-            <div className="flex items-center gap-3">
-              <div className="bg-purple-500/20 p-2 rounded-lg">
+            {/* Submission History */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.2 }}
+              className="mt-6"
+            >
+              <div className="flex items-center gap-3 mb-4">
+                <div className="bg-purple-500/20 p-2 rounded-lg">
+                  <TrendingUp className="w-5 h-5 text-purple-400" />
+                </div>
+                <h3 className="text-xl font-bold text-white">Your Submission History</h3>
+              </div>
+              <SubmissionHistory />
+            </motion.div>
+          </div>
+
+          {/* Right Column - Metrics & Social */}
+          <div className="space-y-6">
+            {/* Personal Metrics Section */}
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="bg-gray-900/50 backdrop-blur-sm rounded-2xl p-6 border border-gray-800"
+            >
+              <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
                 <BarChart3 className="w-5 h-5 text-purple-400" />
+                Your Performance
+              </h3>
+              
+              {/* Earnings */}
+              <div className="grid grid-cols-2 gap-3 mb-4">
+                <div className="bg-gray-800/50 rounded-xl p-3 border border-gray-700/50">
+                  <p className="text-xs text-gray-400 font-medium">Today's Confirmed</p>
+                  <p className="text-xl font-bold text-emerald-400">{formatCurrency(todaysEarnings)}</p>
+                </div>
+                <div className="bg-gray-800/50 rounded-xl p-3 border border-gray-700/50">
+                  <p className="text-xs text-gray-400 font-medium">Pending</p>
+                  <p className="text-xl font-bold text-yellow-400">{formatCurrency(todaysPendingEarnings)}</p>
+                </div>
               </div>
-              <div className="text-left">
-                <p className="text-white font-semibold">Performance Overview</p>
-                <p className="text-sm text-gray-400">View detailed stats and progress</p>
-              </div>
-            </div>
-            <Info className="w-5 h-5 text-gray-400 group-hover:text-gray-300 transition-colors" />
-          </motion.button>
+              
+              {/* Performance Stats */}
+              {spotterMetrics && (
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between p-3 bg-gray-800/30 rounded-lg">
+                    <div className="flex items-center gap-2">
+                      <CheckCircle className="w-4 h-4 text-green-400" />
+                      <span className="text-sm text-gray-300">Approval Rate</span>
+                    </div>
+                    <span className="text-sm font-bold text-white">
+                      {(spotterMetrics.trendApprovalRate30d * 100).toFixed(0)}%
+                    </span>
+                  </div>
+                  
+                  <div className="flex items-center justify-between p-3 bg-gray-800/30 rounded-lg">
+                    <div className="flex items-center gap-2">
+                      <TrendingUp className="w-4 h-4 text-purple-400" />
+                      <span className="text-sm text-gray-300">Viral Rate</span>
+                    </div>
+                    <span className="text-sm font-bold text-white">
+                      {(spotterMetrics.trendViralRate30d * 100).toFixed(0)}%
+                    </span>
+                  </div>
+                  
+                  <div className="flex items-center justify-between p-3 bg-gray-800/30 rounded-lg">
+                    <div className="flex items-center gap-2">
+                      <Sparkles className="w-4 h-4 text-yellow-400" />
+                      <span className="text-sm text-gray-300">Quality Score</span>
+                    </div>
+                    <span className="text-sm font-bold text-white">
+                      {(spotterMetrics.submissionQualityScore * 100).toFixed(0)}%
+                    </span>
+                  </div>
+                  
+                  <div className="flex items-center justify-between p-3 bg-gray-800/30 rounded-lg">
+                    <div className="flex items-center gap-2">
+                      <Flame className="w-4 h-4 text-orange-400" />
+                      <span className="text-sm text-gray-300">Approved Streak</span>
+                    </div>
+                    <span className="text-sm font-bold text-white">
+                      {spotterMetrics.consecutiveApprovedTrends}
+                    </span>
+                  </div>
+                </div>
+              )}
+              
+              <button
+                onClick={() => setShowPerformanceModal(true)}
+                className="w-full mt-4 py-2 bg-purple-500/20 hover:bg-purple-500/30 rounded-lg text-purple-400 text-sm font-medium transition-all flex items-center justify-center gap-2"
+              >
+                View Detailed Stats
+                <Info className="w-4 h-4" />
+              </button>
+            </motion.div>
 
-          {/* Submission History */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.2 }}
-            className="mt-6"
-          >
-            <div className="flex items-center gap-3 mb-4">
-              <div className="bg-purple-500/20 p-2 rounded-lg">
-                <TrendingUp className="w-5 h-5 text-purple-400" />
+            {/* Active Bonuses */}
+            {(streak > 0 || spotterMetrics?.dailyChallengeProgress) && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="bg-gray-900/50 backdrop-blur-sm rounded-2xl p-6 border border-gray-800"
+              >
+                <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                  <Zap className="w-5 h-5 text-yellow-400" />
+                  Active Bonuses
+                </h3>
+                
+                {/* Streak Status */}
+                {streak > 0 && (
+                  <div className="mb-4 bg-orange-500/20 rounded-xl p-4 border border-orange-500/30">
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-2">
+                        <Flame className="w-5 h-5 text-orange-400" />
+                        <span className="font-semibold text-white">{streak} Streak</span>
+                      </div>
+                      <span className="text-sm bg-black/30 px-2 py-1 rounded text-orange-200">
+                        {timeRemaining}s left
+                      </span>
+                    </div>
+                    <p className="text-sm text-orange-200">{streakMultiplier}x speed multiplier active</p>
+                  </div>
+                )}
+                
+                {/* Daily Challenge */}
+                {spotterMetrics?.dailyChallengeProgress && (
+                  <div className="bg-purple-500/20 rounded-xl p-4 border border-purple-500/30">
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-2">
+                        <Target className="w-5 h-5 text-purple-400" />
+                        <span className="font-semibold text-white">Daily Challenge</span>
+                      </div>
+                      <span className="text-sm font-bold text-purple-400">
+                        +${spotterMetrics.dailyChallengeProgress.reward.toFixed(2)}
+                      </span>
+                    </div>
+                    <p className="text-sm text-purple-200 mb-2">
+                      {spotterMetrics.dailyChallengeProgress.description}
+                    </p>
+                    <div className="w-full bg-gray-700 rounded-full h-2 overflow-hidden">
+                      <motion.div
+                        className="h-full bg-gradient-to-r from-purple-500 to-pink-500"
+                        initial={{ width: 0 }}
+                        animate={{ 
+                          width: `${(spotterMetrics.dailyChallengeProgress.progress / 
+                            spotterMetrics.dailyChallengeProgress.target) * 100}%` 
+                        }}
+                      />
+                    </div>
+                  </div>
+                )}
+              </motion.div>
+            )}
+
+            {/* Social Media Hub */}
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="bg-gray-900/50 backdrop-blur-sm rounded-2xl p-6 border border-gray-800"
+            >
+              <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                <ExternalLink className="w-5 h-5 text-blue-400" />
+                Quick Access
+              </h3>
+              <div className="space-y-2">
+                {socialPlatforms.map((platform) => (
+                  <button
+                    key={platform.name}
+                    onClick={() => window.open(platform.url, platform.name.toLowerCase().replace(' ', '_'), 'width=1200,height=800')}
+                    className={`w-full px-4 py-3 rounded-lg bg-gradient-to-r ${platform.color} text-white font-medium text-sm transition-all hover:scale-[1.02] flex items-center gap-3`}
+                  >
+                    <span className="text-xl">{platform.icon}</span>
+                    <span className="flex-1 text-left">{platform.name}</span>
+                    <ExternalLink className="w-4 h-4" />
+                  </button>
+                ))}
               </div>
-              <h3 className="text-xl font-bold text-white">Your Submission History</h3>
-            </div>
-            <SubmissionHistory />
-          </motion.div>
+            </motion.div>
+          </div>
         </div>
       </div>
 
