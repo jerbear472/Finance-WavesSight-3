@@ -87,9 +87,11 @@ export default function ScrollDashboard() {
   const loadPerformanceMetrics = async () => {
     if (!user) return;
     
+    console.log('Loading performance metrics for user:', user.id);
     setLoadingMetrics(true);
     try {
       const metrics = await performanceService.getSpotterPerformanceMetrics(user.id);
+      console.log('Loaded metrics:', metrics);
       setSpotterMetrics(metrics);
       
       // Load today's earnings
@@ -148,12 +150,15 @@ export default function ScrollDashboard() {
   };
 
   const handleTrendSubmit = async (trendData: any) => {
+    console.log('handleTrendSubmit called with:', trendData);
     try {
       if (!user?.id) {
+        console.log('No user ID found');
         setSubmitMessage({ type: 'error', text: 'Please log in to submit trends' });
         setTimeout(() => setSubmitMessage(null), 3000);
         return;
       }
+      console.log('User ID:', user.id);
 
       // Check tier restrictions
       if (spotterMetrics?.currentTier === 'restricted') {
@@ -319,17 +324,38 @@ export default function ScrollDashboard() {
       // Refresh metrics
       loadPerformanceMetrics();
 
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error submitting trend:', error);
-      setSubmitMessage({ type: 'error', text: 'Failed to submit trend. Please try again.' });
-      setTimeout(() => setSubmitMessage(null), 3000);
+      console.error('Error details:', {
+        message: error?.message,
+        code: error?.code,
+        details: error?.details,
+        hint: error?.hint
+      });
+      
+      // More specific error messages
+      let errorMessage = 'Failed to submit trend. Please try again.';
+      if (error?.message?.includes('trend-images')) {
+        errorMessage = 'Failed to upload image. Please try again.';
+      } else if (error?.message?.includes('trend_submissions')) {
+        errorMessage = 'Failed to save trend. Check your data and try again.';
+      } else if (error?.message?.includes('earnings_ledger')) {
+        errorMessage = 'Trend saved but earnings tracking failed.';
+      }
+      
+      setSubmitMessage({ type: 'error', text: errorMessage });
+      setTimeout(() => setSubmitMessage(null), 5000);
     }
   };
 
   const handleQuickSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    console.log('handleQuickSubmit called with URL:', trendLink);
     
-    if (!trendLink.trim()) return;
+    if (!trendLink.trim()) {
+      console.log('No trend link provided');
+      return;
+    }
     
     const normalizedUrl = normalizeUrl(trendLink);
     if (loggedTrends.includes(normalizedUrl)) {
@@ -338,6 +364,7 @@ export default function ScrollDashboard() {
       return;
     }
     
+    console.log('Opening form with URL:', trendLink);
     handleFormOpen(trendLink);
     setShowTrendForm(true);
   };
