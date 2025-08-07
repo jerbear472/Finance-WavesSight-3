@@ -741,42 +741,134 @@ export default function ScrollDashboard() {
                 <p className="text-sm font-semibold">{submitMessage.text}</p>
               </motion.div>
             )}
-          </motion.div>
+            </motion.div>
+          )}
+          
+          {/* Bulk Upload Tab */}
+          {activeTab === 'bulk' && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="bg-gradient-to-br from-green-600/10 via-emerald-600/10 to-teal-600/10 backdrop-blur-sm rounded-2xl p-6 border border-green-500/20 shadow-xl"
+            >
+              <div className="flex items-center gap-3 mb-4">
+                <div className="bg-gradient-to-r from-green-500 to-emerald-600 p-3 rounded-xl shadow-lg">
+                  <Upload className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <h3 className="text-2xl font-bold text-white">Bulk Upload Trends</h3>
+                  <p className="text-green-200/80 font-medium">Upload up to 100 trends at once via CSV</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setShowBulkUpload(true)}
+                className="w-full py-4 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 rounded-xl font-bold text-lg transition-all hover:scale-[1.02] shadow-xl text-white border border-green-400/40"
+              >
+                Open Bulk Upload Tool
+              </button>
+              <div className="mt-4 p-4 bg-green-500/10 rounded-xl border border-green-500/20">
+                <p className="text-sm text-green-300 mb-2">💡 Pro Tips:</p>
+                <ul className="text-xs text-gray-300 space-y-1 list-disc list-inside">
+                  <li>Save time by uploading multiple trends at once</li>
+                  <li>Earn $0.05-0.20 per quality submission</li>
+                  <li>Perfect for trend hunters who browse multiple platforms</li>
+                  <li>CSV template provided for easy formatting</li>
+                </ul>
+              </div>
+            </motion.div>
+          )}
+          
+          {/* Challenges Tab */}
+          {activeTab === 'challenges' && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="bg-gradient-to-br from-purple-600/10 via-pink-600/10 to-indigo-600/10 backdrop-blur-sm rounded-2xl p-6 border border-purple-500/20 shadow-xl"
+            >
+              <div className="flex items-center gap-3 mb-4">
+                <div className="bg-gradient-to-r from-purple-500 to-pink-600 p-3 rounded-xl shadow-lg">
+                  <Target className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <h3 className="text-2xl font-bold text-white">Daily Challenges</h3>
+                  <p className="text-purple-200/80 font-medium">Complete challenges for bonus rewards</p>
+                </div>
+              </div>
+              <DailyChallenges compact={true} />
+              <div className="mt-4 flex gap-3">
+                <button
+                  onClick={() => setShowAchievements(true)}
+                  className="flex-1 py-3 bg-orange-500/20 hover:bg-orange-500/30 rounded-xl font-semibold transition-all text-orange-400 border border-orange-500/30 flex items-center justify-center gap-2"
+                >
+                  <Trophy className="w-5 h-5" />
+                  View Achievements
+                </button>
+                <button
+                  onClick={() => setShowReferral(true)}
+                  className="flex-1 py-3 bg-green-500/20 hover:bg-green-500/30 rounded-xl font-semibold transition-all text-green-400 border border-green-500/30 flex items-center justify-center gap-2"
+                >
+                  <Gift className="w-5 h-5" />
+                  Referral Program
+                </button>
+              </div>
+            </motion.div>
+          )}
+          
+          {/* History Tab */}
+          {activeTab === 'history' && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mt-6"
+            >
+              <div className="flex items-center gap-3 mb-4">
+                <div className="bg-purple-500/20 p-2 rounded-lg">
+                  <TrendingUp className="w-5 h-5 text-purple-400" />
+                </div>
+                <h3 className="text-xl font-bold text-white">Your Submission History</h3>
+              </div>
+              <SubmissionHistory />
+            </motion.div>
+          )}
 
-          {/* Performance Overview Button */}
-          <motion.button
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            onClick={() => setShowPerformanceModal(true)}
-            className="w-full bg-gray-800/40 backdrop-blur-sm rounded-xl p-4 border border-gray-700/50 hover:bg-gray-800/60 transition-all flex items-center justify-between group"
-          >
-            <div className="flex items-center gap-3">
-              <div className="bg-purple-500/20 p-2 rounded-lg">
-                <BarChart3 className="w-5 h-5 text-purple-400" />
+          {/* Performance and Quick Actions */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+            <motion.button
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              onClick={() => setShowPerformanceModal(true)}
+              className="bg-gray-800/40 backdrop-blur-sm rounded-xl p-4 border border-gray-700/50 hover:bg-gray-800/60 transition-all flex items-center justify-between group"
+            >
+              <div className="flex items-center gap-3">
+                <div className="bg-purple-500/20 p-2 rounded-lg">
+                  <BarChart3 className="w-5 h-5 text-purple-400" />
+                </div>
+                <div className="text-left">
+                  <p className="text-white font-semibold">Performance Overview</p>
+                  <p className="text-sm text-gray-400">View detailed stats</p>
+                </div>
               </div>
-              <div className="text-left">
-                <p className="text-white font-semibold">Performance Overview</p>
-                <p className="text-sm text-gray-400">View detailed stats and progress</p>
+              <Info className="w-5 h-5 text-gray-400 group-hover:text-gray-300 transition-colors" />
+            </motion.button>
+            
+            <motion.button
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              onClick={() => setShowReferral(true)}
+              className="bg-gradient-to-r from-green-500/10 to-emerald-500/10 backdrop-blur-sm rounded-xl p-4 border border-green-500/30 hover:from-green-500/20 hover:to-emerald-500/20 transition-all flex items-center justify-between group"
+            >
+              <div className="flex items-center gap-3">
+                <div className="bg-green-500/20 p-2 rounded-lg">
+                  <Gift className="w-5 h-5 text-green-400" />
+                </div>
+                <div className="text-left">
+                  <p className="text-white font-semibold">Refer Friends</p>
+                  <p className="text-sm text-green-300">Earn 10% of their earnings</p>
+                </div>
               </div>
-            </div>
-            <Info className="w-5 h-5 text-gray-400 group-hover:text-gray-300 transition-colors" />
-          </motion.button>
-
-          {/* Submission History */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.2 }}
-            className="mt-6"
-          >
-            <div className="flex items-center gap-3 mb-4">
-              <div className="bg-purple-500/20 p-2 rounded-lg">
-                <TrendingUp className="w-5 h-5 text-purple-400" />
-              </div>
-              <h3 className="text-xl font-bold text-white">Your Submission History</h3>
-            </div>
-            <SubmissionHistory />
-          </motion.div>
+              <Coins className="w-5 h-5 text-green-400 group-hover:text-green-300 transition-colors" />
+            </motion.button>
+          </div>
         </div>
       </div>
 
@@ -813,6 +905,126 @@ export default function ScrollDashboard() {
             setTimeout(() => setSubmitMessage(null), 3000);
           }}
         />
+      )}
+      
+      {/* Daily Challenges Modal */}
+      {showChallenges && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4"
+          onClick={() => setShowChallenges(false)}
+        >
+          <motion.div
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.8, opacity: 0 }}
+            className="bg-gray-900 rounded-3xl p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-white/10"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold text-white">Daily Challenges</h2>
+              <button
+                onClick={() => setShowChallenges(false)}
+                className="p-2 hover:bg-gray-800 rounded-lg transition-colors"
+              >
+                <X className="w-5 h-5 text-gray-400" />
+              </button>
+            </div>
+            <DailyChallenges />
+          </motion.div>
+        </motion.div>
+      )}
+      
+      {/* Achievements Modal */}
+      {showAchievements && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4"
+          onClick={() => setShowAchievements(false)}
+        >
+          <motion.div
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.8, opacity: 0 }}
+            className="bg-gray-900 rounded-3xl p-6 max-w-4xl w-full max-h-[90vh] overflow-y-auto border border-white/10"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold text-white">Your Achievements</h2>
+              <button
+                onClick={() => setShowAchievements(false)}
+                className="p-2 hover:bg-gray-800 rounded-lg transition-colors"
+              >
+                <X className="w-5 h-5 text-gray-400" />
+              </button>
+            </div>
+            <AchievementSystem />
+          </motion.div>
+        </motion.div>
+      )}
+      
+      {/* Referral Modal */}
+      {showReferral && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4"
+          onClick={() => setShowReferral(false)}
+        >
+          <motion.div
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.8, opacity: 0 }}
+            className="bg-gray-900 rounded-3xl p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-white/10"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold text-white">Referral Program</h2>
+              <button
+                onClick={() => setShowReferral(false)}
+                className="p-2 hover:bg-gray-800 rounded-lg transition-colors"
+              >
+                <X className="w-5 h-5 text-gray-400" />
+              </button>
+            </div>
+            <ReferralSystem />
+          </motion.div>
+        </motion.div>
+      )}
+      
+      {/* Bulk Upload Modal */}
+      {showBulkUpload && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4"
+          onClick={() => setShowBulkUpload(false)}
+        >
+          <motion.div
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.8, opacity: 0 }}
+            className="bg-gray-900 rounded-3xl p-6 max-w-4xl w-full max-h-[90vh] overflow-y-auto border border-white/10"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold text-white">Bulk Upload Trends</h2>
+              <button
+                onClick={() => setShowBulkUpload(false)}
+                className="p-2 hover:bg-gray-800 rounded-lg transition-colors"
+              >
+                <X className="w-5 h-5 text-gray-400" />
+              </button>
+            </div>
+            <BulkTrendSubmission onClose={() => setShowBulkUpload(false)} />
+          </motion.div>
+        </motion.div>
       )}
 
       {/* Performance Modal */}
