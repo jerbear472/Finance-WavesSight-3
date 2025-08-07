@@ -13,15 +13,13 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { ScrollSession, ScrollSessionRef } from '../components/ScrollSession/ScrollSessionForwardRef';
 import { FloatingTrendLogger } from '../components/TrendLogger/FloatingTrendLogger';
 import { SwipeableVerificationFeed } from '../components/TrendVerification/SwipeableVerificationFeed';
-import { StreaksAndChallenges } from '../components/StreaksAndChallenges/StreaksAndChallenges';
 import { EarningsDashboard } from './EarningsDashboard';
 import { TrendRadar } from './TrendRadar';
-import { enhancedTheme } from '../styles/theme.enhanced';
 import { useAuth } from '../hooks/useAuth';
 
 const Tab = createBottomTabNavigator();
 
-// Main Dashboard Screen with Session Timer
+// Simplified Main Dashboard Screen
 const MainDashboard: React.FC = () => {
   const [isSessionActive, setIsSessionActive] = useState(false);
   const scrollSessionRef = useRef<ScrollSessionRef>(null);
@@ -31,58 +29,55 @@ const MainDashboard: React.FC = () => {
   }, []);
 
   const handleTrendLogged = useCallback(() => {
-    // Increment trend count in session
     scrollSessionRef.current?.incrementTrendCount();
   }, []);
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView showsVerticalScrollIndicator={false}>
-        {/* Header */}
-        <LinearGradient
-          colors={['#0080ff', '#00d4ff']}
-          style={styles.header}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-        >
-          <Text style={styles.headerTitle}>WaveSite</Text>
-          <Text style={styles.headerSubtitle}>Ride the wave of trends</Text>
-        </LinearGradient>
+      <ScrollView 
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.scrollContent}
+      >
+        {/* Clean Header */}
+        <View style={styles.header}>
+          <Text style={styles.headerTitle}>WaveSight</Text>
+          <Text style={styles.headerSubtitle}>Trend Spotting</Text>
+        </View>
 
         {/* Scroll Session Component */}
-        <ScrollSession
-          ref={scrollSessionRef}
-          onSessionStateChange={handleSessionStateChange}
-        />
+        <View style={styles.sessionContainer}>
+          <ScrollSession
+            ref={scrollSessionRef}
+            onSessionStateChange={handleSessionStateChange}
+          />
+        </View>
 
-        {/* Quick Stats */}
-        <View style={styles.quickStats}>
+        {/* Simple Stats Grid */}
+        <View style={styles.statsGrid}>
           <View style={styles.statCard}>
-            <Icon name="fire" size={24} color={enhancedTheme.colors.warning} />
             <Text style={styles.statValue}>7</Text>
-            <Text style={styles.statLabel}>Day Streak</Text>
+            <Text style={styles.statLabel}>Streak</Text>
           </View>
           <View style={styles.statCard}>
-            <Icon name="trending-up" size={24} color={enhancedTheme.colors.success} />
             <Text style={styles.statValue}>42</Text>
-            <Text style={styles.statLabel}>Trends Today</Text>
+            <Text style={styles.statLabel}>Today</Text>
           </View>
           <View style={styles.statCard}>
-            <Icon name="cash" size={24} color={enhancedTheme.colors.primary} />
             <Text style={styles.statValue}>$12.50</Text>
-            <Text style={styles.statLabel}>Today's Earnings</Text>
+            <Text style={styles.statLabel}>Earnings</Text>
           </View>
         </View>
 
-        {/* Streaks & Challenges Preview */}
-        <View style={styles.section}>
-          <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>Active Challenges</Text>
-            <Pressable>
-              <Text style={styles.seeAll}>See All</Text>
-            </Pressable>
-          </View>
-          <StreaksAndChallenges />
+        {/* Quick Actions */}
+        <View style={styles.quickActions}>
+          <Pressable style={styles.actionButton}>
+            <Icon name="trending-up" size={20} color="#0080ff" />
+            <Text style={styles.actionText}>Submit Trend</Text>
+          </Pressable>
+          <Pressable style={styles.actionButton}>
+            <Icon name="check-circle" size={20} color="#0080ff" />
+            <Text style={styles.actionText}>Verify</Text>
+          </Pressable>
         </View>
       </ScrollView>
 
@@ -95,26 +90,18 @@ const MainDashboard: React.FC = () => {
   );
 };
 
-// Tab Navigator Setup
+// Simplified Tab Navigator
 export const ScrollDashboard: React.FC = () => {
   const { user } = useAuth();
 
   return (
     <Tab.Navigator
       screenOptions={{
-        tabBarStyle: {
-          backgroundColor: enhancedTheme.colors.surface,
-          borderTopWidth: 0,
-          elevation: 20,
-          shadowOpacity: 0.1,
-          shadowRadius: 20,
-          height: 60,
-          paddingBottom: 8,
-          paddingTop: 8,
-        },
-        tabBarActiveTintColor: enhancedTheme.colors.primary,
-        tabBarInactiveTintColor: enhancedTheme.colors.textSecondary,
+        tabBarStyle: styles.tabBar,
+        tabBarActiveTintColor: '#0080ff',
+        tabBarInactiveTintColor: '#6B7280',
         headerShown: false,
+        tabBarLabelStyle: styles.tabLabel,
       }}
     >
       <Tab.Screen
@@ -122,7 +109,7 @@ export const ScrollDashboard: React.FC = () => {
         component={MainDashboard}
         options={{
           tabBarIcon: ({ color, size }) => (
-            <Icon name="home" size={size} color={color} />
+            <Icon name="home" size={24} color={color} />
           ),
         }}
       />
@@ -131,7 +118,7 @@ export const ScrollDashboard: React.FC = () => {
         component={SwipeableVerificationFeed}
         options={{
           tabBarIcon: ({ color, size }) => (
-            <Icon name="check-circle" size={size} color={color} />
+            <Icon name="check-circle" size={24} color={color} />
           ),
         }}
       />
@@ -140,7 +127,7 @@ export const ScrollDashboard: React.FC = () => {
         component={TrendRadar}
         options={{
           tabBarIcon: ({ color, size }) => (
-            <Icon name="radar" size={size} color={color} />
+            <Icon name="radar" size={24} color={color} />
           ),
         }}
       />
@@ -149,7 +136,7 @@ export const ScrollDashboard: React.FC = () => {
         component={EarningsDashboard}
         options={{
           tabBarIcon: ({ color, size }) => (
-            <Icon name="cash-multiple" size={size} color={color} />
+            <Icon name="cash-multiple" size={24} color={color} />
           ),
         }}
       />
@@ -160,65 +147,94 @@ export const ScrollDashboard: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: enhancedTheme.colors.background,
+    backgroundColor: '#000000',
+  },
+  scrollContent: {
+    paddingBottom: 20,
   },
   header: {
-    padding: 24,
-    paddingTop: 40,
+    paddingHorizontal: 24,
+    paddingTop: 20,
+    paddingBottom: 24,
     alignItems: 'center',
   },
   headerTitle: {
-    fontSize: 32,
+    fontSize: 28,
     fontWeight: '700',
     color: '#FFFFFF',
+    letterSpacing: -0.5,
   },
   headerSubtitle: {
-    fontSize: 16,
-    color: '#FFFFFF80',
+    fontSize: 14,
+    color: '#6B7280',
     marginTop: 4,
+    fontWeight: '500',
   },
-  quickStats: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
+  sessionContainer: {
     paddingHorizontal: 20,
-    marginVertical: 20,
+    marginBottom: 24,
+  },
+  statsGrid: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: 20,
+    marginBottom: 24,
+    gap: 12,
   },
   statCard: {
-    alignItems: 'center',
-    backgroundColor: enhancedTheme.colors.surface,
-    padding: 16,
-    borderRadius: 16,
     flex: 1,
-    marginHorizontal: 6,
+    backgroundColor: '#111111',
+    padding: 20,
+    borderRadius: 16,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#1F2937',
   },
   statValue: {
     fontSize: 24,
     fontWeight: '700',
-    color: enhancedTheme.colors.text,
-    marginVertical: 4,
+    color: '#FFFFFF',
+    marginBottom: 4,
   },
   statLabel: {
     fontSize: 12,
-    color: enhancedTheme.colors.textSecondary,
+    color: '#6B7280',
+    fontWeight: '500',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
   },
-  section: {
-    paddingHorizontal: 20,
-    marginBottom: 20,
-  },
-  sectionHeader: {
+  quickActions: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    paddingHorizontal: 20,
+    gap: 12,
+  },
+  actionButton: {
+    flex: 1,
+    flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 16,
+    justifyContent: 'center',
+    backgroundColor: '#111111',
+    padding: 16,
+    borderRadius: 12,
+    gap: 8,
+    borderWidth: 1,
+    borderColor: '#1F2937',
   },
-  sectionTitle: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: enhancedTheme.colors.text,
-  },
-  seeAll: {
+  actionText: {
     fontSize: 14,
-    color: enhancedTheme.colors.primary,
+    fontWeight: '600',
+    color: '#FFFFFF',
+  },
+  tabBar: {
+    backgroundColor: '#111111',
+    borderTopWidth: 1,
+    borderTopColor: '#1F2937',
+    height: 64,
+    paddingBottom: 8,
+    paddingTop: 8,
+  },
+  tabLabel: {
+    fontSize: 11,
     fontWeight: '500',
   },
 });
