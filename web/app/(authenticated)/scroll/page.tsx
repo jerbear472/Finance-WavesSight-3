@@ -27,8 +27,6 @@ import {
   X,
   ExternalLink
 } from 'lucide-react';
-import { ScrollSession } from '@/components/ScrollSession';
-import { FloatingTrendLogger } from '@/components/FloatingTrendLogger';
 import TrendSubmissionFormMerged from '@/components/TrendSubmissionFormMerged';
 import TrendScreenshotUpload from '@/components/TrendScreenshotUpload';
 import SubmissionHistory from '@/components/SubmissionHistory';
@@ -47,8 +45,6 @@ import {
 export default function ScrollDashboard() {
   const router = useRouter();
   const { user, updateUserEarnings } = useAuth();
-  const [isScrolling, setIsScrolling] = useState(false);
-  const scrollSessionRef = useRef<any>();
   const performanceService = TrendSpotterPerformanceService.getInstance();
   
   // Form states
@@ -68,19 +64,6 @@ export default function ScrollDashboard() {
   const [qualityMetrics, setQualityMetrics] = useState<TrendQualityMetrics | null>(null);
   const [estimatedPayment, setEstimatedPayment] = useState<any>(null);
   const [loadingMetrics, setLoadingMetrics] = useState(true);
-  
-  // Streak states
-  const [streak, setStreak] = useState(0);
-  const [streakMultiplier, setStreakMultiplier] = useState(1);
-  const [lastTrendTime, setLastTrendTime] = useState<Date | null>(null);
-  const [trendsInWindow, setTrendsInWindow] = useState<Date[]>([]);
-  const [timeRemaining, setTimeRemaining] = useState(180);
-  const streakTimerRef = useRef<NodeJS.Timeout>();
-  
-  // Constants
-  const STREAK_WINDOW = 180000; // 3 minutes in milliseconds
-  const TRENDS_FOR_STREAK = 3;
-  const STREAK_TIMEOUT = 60000;
 
   // Social media platforms
   const socialPlatforms = [
@@ -134,82 +117,6 @@ export default function ScrollDashboard() {
     }
   };
 
-  // Streak timer effect
-  useEffect(() => {
-    if (streak > 0 && lastTrendTime) {
-      const timer = setInterval(() => {
-        const timeSinceLastTrend = Date.now() - lastTrendTime.getTime();
-        const remaining = Math.max(0, (STREAK_TIMEOUT - timeSinceLastTrend) / 1000);
-        
-        if (remaining === 0) {
-          setStreak(0);
-          setStreakMultiplier(1);
-          setTrendsInWindow([]);
-          clearInterval(timer);
-        }
-        
-        setTimeRemaining(Math.floor(remaining));
-      }, 1000);
-      
-      streakTimerRef.current = timer;
-      
-      return () => clearInterval(timer);
-    }
-  }, [streak, lastTrendTime]);
-
-  const calculateMultiplier = (streakCount: number) => {
-    if (streakCount === 0) return 1;
-    if (streakCount < 3) return 1.5;
-    if (streakCount < 5) return 2;
-    if (streakCount < 10) return 3;
-    return 5;
-  };
-
-  const handleTrendLogged = () => {
-    if (!scrollSessionRef.current?.isActive) {
-      setSubmitMessage({ type: 'error', text: 'Start a session to log trends!' });
-      setTimeout(() => setSubmitMessage(null), 3000);
-      return;
-    }
-    
-    scrollSessionRef.current?.logTrend();
-    updateStreakProgress();
-  };
-
-  const updateStreakProgress = () => {
-    if (!scrollSessionRef.current?.isActive) return;
-    
-    const now = new Date();
-    const updatedTrends = [...trendsInWindow, now];
-    const recentTrends = updatedTrends.filter(
-      time => now.getTime() - time.getTime() < STREAK_WINDOW
-    );
-    
-    setTrendsInWindow(recentTrends);
-    setLastTrendTime(now);
-    
-    if (recentTrends.length >= TRENDS_FOR_STREAK) {
-      const newStreak = streak + 1;
-      setStreak(newStreak);
-      setStreakMultiplier(calculateMultiplier(newStreak));
-      setTrendsInWindow([]);
-    }
-  };
-
-  const handleSessionStateChange = (active: boolean) => {
-    setIsScrolling(active);
-    
-    if (!active) {
-      setStreak(0);
-      setStreakMultiplier(1);
-      setTrendsInWindow([]);
-      setLastTrendTime(null);
-      
-      if (streakTimerRef.current) {
-        clearInterval(streakTimerRef.current);
-      }
-    }
-  };
 
   const normalizeUrl = (url: string) => {
     try {
@@ -244,12 +151,6 @@ export default function ScrollDashboard() {
     try {
       if (!user?.id) {
         setSubmitMessage({ type: 'error', text: 'Please log in to submit trends' });
-        setTimeout(() => setSubmitMessage(null), 3000);
-        return;
-      }
-      
-      if (!scrollSessionRef.current?.isActive) {
-        setSubmitMessage({ type: 'error', text: 'Start a scroll session to submit trends!' });
         setTimeout(() => setSubmitMessage(null), 3000);
         return;
       }
@@ -402,8 +303,6 @@ export default function ScrollDashboard() {
       setLoggedTrends(prev => [...prev, normalizedUrl]);
       setTodaysPendingEarnings(prev => prev + paymentInfo.totalAmount);
       
-      updateStreakProgress();
-      
       setSubmitMessage({ 
         type: 'success', 
         text: `Trend submitted! +${formatCurrency(paymentInfo.totalAmount)} pending (Quality: ${(qualityMetrics.overallQuality * 100).toFixed(0)}%)` 
@@ -478,39 +377,7 @@ export default function ScrollDashboard() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Left Column - Main Submission Area */}
           <div className="lg:col-span-2 space-y-6">
-            {/* Session Required Notice */}
-            {!isScrolling && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="bg-blue-500/10 backdrop-blur-sm rounded-xl p-4 border border-blue-500/30"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="bg-blue-500/20 p-2 rounded-lg">
-                    <Clock className="w-5 h-5 text-blue-400" />
-                  </div>
-                  <div>
-                    <p className="text-white font-medium">Start a session to begin earning!</p>
-                    <p className="text-blue-200 text-sm">Trends can only be logged during active sessions</p>
-                  </div>
-                </div>
-              </motion.div>
-            )}
-
-            {/* Scroll Session Component */}
-            <ScrollSession
-              ref={scrollSessionRef}
-              onSessionStateChange={handleSessionStateChange}
-              onTrendLogged={handleTrendLogged}
-              streak={streak}
-              streakMultiplier={streakMultiplier}
-              onStreakUpdate={(streakCount, multiplier) => {
-                setStreak(streakCount);
-                setStreakMultiplier(multiplier);
-              }}
-            />
-
-            {/* Submit New Trend - PROMINENT */}
+            {/* Submit New Trend - PROMINENT AT TOP */}
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
@@ -519,7 +386,7 @@ export default function ScrollDashboard() {
             >
             <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-purple-500/5 rounded-2xl"></div>
             
-            <div className="flex items-center justify-between mb-6 relative z-10">
+            <div className="flex items-center justify-between mb-4 relative z-10">
               <div className="flex items-center gap-4">
                 <div className="bg-gradient-to-r from-blue-500 to-purple-600 p-3 rounded-xl shadow-lg">
                   <TrendingUp className="w-6 h-6 text-white" />
@@ -534,8 +401,25 @@ export default function ScrollDashboard() {
                 </div>
               </div>
               <div className="text-right bg-white/10 backdrop-blur-sm px-4 py-3 rounded-xl border border-white/20">
-                <p className="text-sm text-gray-300 font-medium">Today</p>
+                <p className="text-sm text-gray-300 font-medium">Today's Trends</p>
                 <p className="text-xl font-bold text-white">{loggedTrends.length}</p>
+              </div>
+            </div>
+
+            {/* Social Media Quick Links */}
+            <div className="mb-4 relative z-10">
+              <p className="text-xs text-gray-400 uppercase tracking-wider mb-2">Browse Trending Content</p>
+              <div className="flex flex-wrap gap-2">
+                {socialPlatforms.map((platform) => (
+                  <button
+                    key={platform.name}
+                    onClick={() => window.open(platform.url, platform.name.toLowerCase().replace(' ', '_'), 'width=1200,height=800')}
+                    className={`px-3 py-2 rounded-lg bg-gradient-to-r ${platform.color} text-white font-medium text-sm transition-all hover:scale-105 flex items-center gap-2`}
+                  >
+                    <span className="text-lg">{platform.icon}</span>
+                    <span>{platform.name}</span>
+                  </button>
+                ))}
               </div>
             </div>
 
@@ -554,29 +438,6 @@ export default function ScrollDashboard() {
               </motion.div>
             )}
 
-            {/* Quick Actions */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6 relative z-10">
-              <button
-                onClick={() => setShowScreenshotForm(true)}
-                className="flex items-center justify-center gap-2 py-3 px-4 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 rounded-xl transition-all hover:scale-105 shadow-lg border border-emerald-500/30 text-white font-semibold"
-              >
-                <Camera className="w-5 h-5" />
-                Upload Screenshot
-              </button>
-              <button
-                onClick={() => window.open('https://www.tiktok.com', 'tiktok', 'width=1200,height=800,left=200,top=100')}
-                className="text-center py-3 px-4 bg-black hover:bg-gray-900 rounded-xl transition-all hover:scale-105 font-semibold border border-gray-700/50 text-white shadow-lg"
-              >
-                🎵 TikTok
-              </button>
-              <button
-                onClick={() => window.open('https://www.instagram.com', 'instagram', 'width=1200,height=800,left=200,top=100')}
-                className="text-center py-3 px-4 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 rounded-xl transition-all hover:scale-105 font-semibold text-white shadow-lg"
-              >
-                📸 Instagram
-              </button>
-            </div>
-
             {/* Form */}
             <form onSubmit={handleQuickSubmit} className="space-y-4 relative z-10">
               <div className="relative">
@@ -592,14 +453,24 @@ export default function ScrollDashboard() {
                 </div>
               </div>
               
-              <button
-                type="submit"
-                disabled={!trendLink.trim()}
-                className="w-full flex items-center justify-center gap-3 px-5 py-4 bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 hover:from-blue-500 hover:via-purple-500 hover:to-indigo-500 disabled:bg-gray-600 disabled:opacity-50 rounded-xl font-bold text-lg transition-all hover:scale-[1.02] shadow-xl text-white border border-blue-400/40"
-              >
-                <Send className="w-5 h-5" />
-                Add Trend Details
-              </button>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <button
+                  type="submit"
+                  disabled={!trendLink.trim()}
+                  className="flex items-center justify-center gap-3 px-5 py-4 bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 hover:from-blue-500 hover:via-purple-500 hover:to-indigo-500 disabled:bg-gray-600 disabled:opacity-50 rounded-xl font-bold text-lg transition-all hover:scale-[1.02] shadow-xl text-white border border-blue-400/40"
+                >
+                  <Send className="w-5 h-5" />
+                  Add Trend Details
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowScreenshotForm(true)}
+                  className="flex items-center justify-center gap-3 px-5 py-4 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 rounded-xl font-bold text-lg transition-all hover:scale-[1.02] shadow-xl text-white border border-emerald-400/40"
+                >
+                  <Camera className="w-5 h-5" />
+                  Upload Screenshot
+                </button>
+              </div>
             </form>
 
             {/* Feedback */}
@@ -714,97 +585,74 @@ export default function ScrollDashboard() {
               </button>
             </motion.div>
 
-            {/* Active Bonuses */}
-            {(streak > 0 || spotterMetrics?.dailyChallengeProgress) && (
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="bg-gray-900/50 backdrop-blur-sm rounded-2xl p-6 border border-gray-800"
-              >
-                <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-                  <Zap className="w-5 h-5 text-yellow-400" />
-                  Active Bonuses
-                </h3>
-                
-                {/* Streak Status */}
-                {streak > 0 && (
-                  <div className="mb-4 bg-orange-500/20 rounded-xl p-4 border border-orange-500/30">
-                    <div className="flex items-center justify-between mb-2">
-                      <div className="flex items-center gap-2">
-                        <Flame className="w-5 h-5 text-orange-400" />
-                        <span className="font-semibold text-white">{streak} Streak</span>
-                      </div>
-                      <span className="text-sm bg-black/30 px-2 py-1 rounded text-orange-200">
-                        {timeRemaining}s left
-                      </span>
-                    </div>
-                    <p className="text-sm text-orange-200">{streakMultiplier}x speed multiplier active</p>
-                  </div>
-                )}
-                
-                {/* Daily Challenge */}
-                {spotterMetrics?.dailyChallengeProgress && (
-                  <div className="bg-purple-500/20 rounded-xl p-4 border border-purple-500/30">
-                    <div className="flex items-center justify-between mb-2">
-                      <div className="flex items-center gap-2">
-                        <Target className="w-5 h-5 text-purple-400" />
-                        <span className="font-semibold text-white">Daily Challenge</span>
-                      </div>
-                      <span className="text-sm font-bold text-purple-400">
-                        +${spotterMetrics.dailyChallengeProgress.reward.toFixed(2)}
-                      </span>
-                    </div>
-                    <p className="text-sm text-purple-200 mb-2">
-                      {spotterMetrics.dailyChallengeProgress.description}
-                    </p>
-                    <div className="w-full bg-gray-700 rounded-full h-2 overflow-hidden">
-                      <motion.div
-                        className="h-full bg-gradient-to-r from-purple-500 to-pink-500"
-                        initial={{ width: 0 }}
-                        animate={{ 
-                          width: `${(spotterMetrics.dailyChallengeProgress.progress / 
-                            spotterMetrics.dailyChallengeProgress.target) * 100}%` 
-                        }}
-                      />
-                    </div>
-                  </div>
-                )}
-              </motion.div>
-            )}
-
-            {/* Social Media Hub */}
+            {/* Streaks & Bonuses */}
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               className="bg-gray-900/50 backdrop-blur-sm rounded-2xl p-6 border border-gray-800"
             >
               <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-                <ExternalLink className="w-5 h-5 text-blue-400" />
-                Quick Access
+                <Flame className="w-5 h-5 text-orange-400" />
+                Streaks & Bonuses
               </h3>
-              <div className="space-y-2">
-                {socialPlatforms.map((platform) => (
-                  <button
-                    key={platform.name}
-                    onClick={() => window.open(platform.url, platform.name.toLowerCase().replace(' ', '_'), 'width=1200,height=800')}
-                    className={`w-full px-4 py-3 rounded-lg bg-gradient-to-r ${platform.color} text-white font-medium text-sm transition-all hover:scale-[1.02] flex items-center gap-3`}
-                  >
-                    <span className="text-xl">{platform.icon}</span>
-                    <span className="flex-1 text-left">{platform.name}</span>
-                    <ExternalLink className="w-4 h-4" />
-                  </button>
-                ))}
+              
+              {/* Current Streak */}
+              {spotterMetrics && (
+                <div className="mb-4 bg-orange-500/20 rounded-xl p-4 border border-orange-500/30">
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                      <Flame className="w-5 h-5 text-orange-400" />
+                      <span className="font-semibold text-white">Approved Streak</span>
+                    </div>
+                    <span className="text-lg font-bold text-orange-400">
+                      {spotterMetrics.consecutiveApprovedTrends}
+                    </span>
+                  </div>
+                  <p className="text-sm text-orange-200">Keep submitting quality trends!</p>
+                </div>
+              )}
+              
+              {/* Daily Challenge */}
+              {spotterMetrics?.dailyChallengeProgress && (
+                <div className="bg-purple-500/20 rounded-xl p-4 border border-purple-500/30">
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                      <Target className="w-5 h-5 text-purple-400" />
+                      <span className="font-semibold text-white">Daily Challenge</span>
+                    </div>
+                    <span className="text-sm font-bold text-purple-400">
+                      +${spotterMetrics.dailyChallengeProgress.reward.toFixed(2)}
+                    </span>
+                  </div>
+                  <p className="text-sm text-purple-200 mb-2">
+                    {spotterMetrics.dailyChallengeProgress.description}
+                  </p>
+                  <div className="w-full bg-gray-700 rounded-full h-2 overflow-hidden">
+                    <motion.div
+                      className="h-full bg-gradient-to-r from-purple-500 to-pink-500"
+                      initial={{ width: 0 }}
+                      animate={{ 
+                        width: `${(spotterMetrics.dailyChallengeProgress.progress / 
+                          spotterMetrics.dailyChallengeProgress.target) * 100}%` 
+                      }}
+                    />
+                  </div>
+                </div>
+              )}
+              
+              {/* Bonus Tips */}
+              <div className="mt-4 p-3 bg-gray-800/50 rounded-lg">
+                <p className="text-xs text-gray-400 mb-2">💡 Pro Tips:</p>
+                <ul className="text-xs text-gray-300 space-y-1 list-disc list-inside">
+                  <li>Submit trends with screenshots for higher payouts</li>
+                  <li>Complete daily challenges for bonus rewards</li>
+                  <li>Maintain streak for tier upgrades</li>
+                </ul>
               </div>
             </motion.div>
           </div>
         </div>
       </div>
-
-      {/* Floating Trend Logger */}
-      <FloatingTrendLogger 
-        isVisible={isScrolling} 
-        onTrendLogged={handleTrendLogged}
-      />
 
       {/* Trend Submission Form Modal */}
       {showTrendForm && (
